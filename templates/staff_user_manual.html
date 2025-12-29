@@ -1,0 +1,577 @@
+{% extends "base.html" %}
+{% block title %}User Manual - FuTuRe FLoW{% endblock %}
+{% block body %}
+<div class="container" style="background: #f5f7fa;">
+    <div class="content" style="max-width: 1100px; margin: 0 auto; padding: 40px 20px;">
+        
+        <!-- Bismillah Header -->
+        <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <div style="font-family: 'Traditional Arabic', 'Microsoft Sans Serif', 'Segoe UI', Tahoma; font-size: 28px; color: #2e7d32; margin-bottom: 10px;">
+                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+            </div>
+            <div style="font-size: 12px; color: #666; font-style: italic;">
+                In the name of Allah, the Most Gracious, the Most Merciful
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <div style="background: linear-gradient(135deg, #0D47A1, #0a7d3a); padding: 32px; border-radius: 6px; margin-bottom: 25px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,0.15);">
+            <div style="font-size: 50px; font-weight: bold; letter-spacing: 5px; margin-bottom: 15px;">
+                <span style="color: #ff5252;">S</span>
+                <span style="color: #ff5252;">A</span>
+                <span style="color: #000;">U</span>
+                <span style="color: #ff5252;">K</span>
+            </div>
+            <h1 style="color: white; font-size: 24px; margin: 0;">User Manual & Guidelines</h1>
+            <p style="color: rgba(255,255,255,0.9); margin-top: 8px; font-size: 14px;">Hi dear, this is Naveed Khan, I tried to add everything to guide you about the application</p>
+        </div>
+
+        <!-- Table of Contents -->
+        <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border-left: 4px solid #2196F3;">
+            <h2 style="color: #01411C; margin-bottom: 20px; font-size: 22px;">Table of Contents</h2>
+            <ol style="line-height: 2; font-size: 15px; color: #333;">
+                <li><a href="#overview" style="color: #2196F3; text-decoration: none;">System Overview</a></li>
+                <li><a href="#login" style="color: #2196F3; text-decoration: none;">Login & Account Setup</a></li>
+                <li><a href="#dashboard" style="color: #2196F3; text-decoration: none;">Staff Dashboard</a></li>
+                <li><a href="#search" style="color: #2196F3; text-decoration: none;">Search Universities</a></li>
+                <li><a href="#advice" style="color: #2196F3; text-decoration: none;">Generate University Advice</a></li>
+                <li><a href="#tips" style="color: #2196F3; text-decoration: none;">Tips & Best Practices</a></li>
+                <li><a href="#comparison" style="color: #2196F3; text-decoration: none;">Version Comparison</a></li>
+                <li><a href="#troubleshooting" style="color: #2196F3; text-decoration: none;">Troubleshooting</a></li>
+            </ol>
+        </div>
+
+        <!-- Section 1: Overview -->
+        <div id="overview" style="background: white; padding: 20px; border-radius: 6px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">1. System Overview</h2>
+            
+            <h3 style="color: #2e7d32; margin-top: 20px; font-size: 18px;">What is FuTuRe FLoW?</h3>
+            <p style="line-height: 1.8; color: #555;">
+                FuTuRe FLoW is a comprehensive university management system designed specifically for Study Advisers UK Islamabad. It helps staff members search
+                universities, check student eligibility, generate professional advice reports, send advice on Email and copy for whatsapp to share with students.
+            </p>
+            
+            <h3 style="color: #2e7d32; margin-top: 25px; font-size: 18px;">Key Features:</h3>
+            <ul style="line-height: 2; color: #555;">
+                <li><strong>Advanced University Database</strong> - Detailed requirements for each university</li>
+                <li><strong>MOI Eligibility Checking</strong> - Automatic Medium of Instruction validation</li>
+                <li><strong>Multiple Province Support</strong> - Universities with campuses in different provinces</li>
+                <li><strong>Study Gap Filtering</strong> - Automatic filtering based on gap years</li>
+                <li><strong>Bachelor Entry Requirements</strong> - FSc and BA marks validation</li>
+                <li><strong>Professional PDF Reports</strong> - Ready-to-share advice documents</li>
+                <li><strong>Multi-Criteria Search</strong> - Filter by country, province, level, and more</li>
+            </ul>
+        </div>
+
+        <!-- Section 2: Login -->
+        <div id="login" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">2. Login & Account Setup</h2>
+            
+            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 4px solid #4CAF50; margin-bottom: 20px;">
+                <h3 style="color: #2e7d32; margin-top: 0; font-size: 17px;">For New Staff Members:</h3>
+                
+                <h4 style="color: #388e3c; margin-top: 20px; font-size: 16px;">Step 1: Registration</h4>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li>Visit the login page</li>
+                    <li>Click "<strong>Register as Staff</strong>"</li>
+                    <li>Fill in the registration form:
+                        <ul style="margin-top: 10px;">
+                            <li><strong>Userame</strong> - As per your official ID</li>
+                            <li><strong>Designation</strong> - As awarded by the company</li>
+                            <li><strong>Password</strong> - Minimum 8 characters recommended</li>
+                            <li><strong>Official Email</strong> - Your SAUK/Personal email address</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4 style="color: #388e3c; margin-top: 25px; font-size: 16px;">Step 2: Verification</h4>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li>After registration, complete the <strong>verification form</strong></li>
+                    <li>Answer all <strong>6 verification questions</strong> accurately</li>
+                    <li>Questions verify your employment with SAUK Islamabad</li>
+                    <li>Submit the form and wait for admin approval</li>
+                </ol>
+
+                <h4 style="color: #388e3c; margin-top: 25px; font-size: 16px;">Step 3: Approval</h4>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li>Admin will review your verification answers</li>
+                    <li>Approval typically within <strong>24-48 hours</strong></li>
+                    <li>Once approved, login with your credentials</li>
+                    <li>Upon Approval you will get access to the user dashboard</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Section 3: Dashboard -->
+        <div id="dashboard" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">3. Staff Dashboard</h2>
+            
+            <p style="line-height: 1.8; color: #555;">The dashboard is your <strong>central hub</strong> for all operations. Here you can:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <h4 style="color: #1976d2; margin-top: 0;">Dashboard</h4>
+                    <p style="color: #555; font-size: 14px; margin: 0;">Welcome screen with your profile and system information</p>
+                </div>
+                <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                    <h4 style="color: #7b1fa2; margin-top: 0;">Search Universities</h4>
+                    <p style="color: #555; font-size: 14px; margin: 0;">Quick search with basic filters</p>
+                </div>
+                <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                    <h4 style="color: #f57c00; margin-top: 0;">Generate Advice</h4>
+                    <p style="color: #555; font-size: 14px; margin: 0;">Main feature - detailed search and PDF generation</p>
+                </div>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-top: 25px;">
+                <h3 style="color: #2e7d32; margin-top: 0; font-size: 17px;">Your Permissions in free version:</h3>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li>Search and view all universities in database</li>
+                    <li>Generate professional advice reports for students</li>
+                    <li>Check MOI eligibility automatically</li>
+                    <li>Download PDF reports for student records</li>
+                    <li>Access complete university requirements and details</li>
+                    <li>Cannot add, edit, or delete university data (admin only)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 4: Search -->
+        <div id="search" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">4. Search Universities</h2>
+            
+            <h3 style="color: #2e7d32; font-size: 17px;">This function can't download, Email or Copy options, it is only to check where the student is eligible:</h3>
+            <ol style="line-height: 1.8; color: #555;">
+                <li>Click "<strong>Search Universities</strong>" from staff menu</li>
+                <li>Apply filters as needed:
+                    <ul style="margin-top: 10px;">
+                        <li><strong>Country</strong> - Select from dropdown</li>
+                        <li><strong>Province</strong> - Appears after country selection</li>
+                        <li><strong>Subject</strong> - Field of study</li>
+                        <li><strong>Level</strong> - Bachelor/Master/PhD</li>
+                        <li><strong>Initial Deposit</strong> - Filter by deposit amount</li>
+                    </ul>
+                </li>
+                <li>Click "<strong>Search</strong>" button</li>
+                <li>View results in table format with complete details</li>
+            </ol>
+
+            <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196F3; margin-top: 25px;">
+                <h3 style="color: #1976d2; margin-top: 0; font-size: 16px;">Quick Tip:</h3>
+                <p style="color: #555; margin: 0;">Use <strong>Search Universities</strong> for quick lookups. For detailed student-specific advice with MOI checking and PDF generation, use <strong>Generate Advice</strong> feature instead.</p>
+            </div>
+        </div>
+
+        <!-- Section 5: Generate Advice (Most Important) -->
+        <div id="advice" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border: 3px solid #4CAF50;">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">5. Generate University Advice (MOST IMPORTANT)</h2>
+            
+            <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 25px;">
+                <p style="color: #856404; font-size: 16px; margin: 0;"><strong>This is your primary tool for advising students!</strong> Follow these steps carefully for best results.</p>
+            </div>
+
+            <h3 style="color: #2e7d32; font-size: 17px;">Step-by-Step Process:</h3>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="color: #1976d2; font-size: 16px;">Step 1: Location Filters (Optional)</h4>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li><strong>Country</strong> - Select if student has preference</li>
+                    <li><strong>Province</strong> - Automatically loads after country selection</li>
+                    <li><strong>Course Level</strong> - Bachelor/Master/PhD/etc</li>
+                </ul>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="color: #1976d2; font-size: 16px;">Step 2: Course Search (REQUIRED)</h4>
+                <p style="color: #555; line-height: 1.8;">Enter the course name student is interested in:</p>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li><strong>Examples:</strong> "MBA", "Computer Science", "Nursing", "Civil Engineering"</li>
+                    <li>System searches only in specific course names</li>
+                    <li>Be specific for better results</li>
+                    <li>Try variations if no results found</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 25px; border-radius: 8px; margin: 20px 0; border: 2px solid #4CAF50;">
+                <h4 style="color: #2e7d32; margin-top: 0; font-size: 16px;">Step 3: Student Profile (HIGHLY RECOMMENDED)</h4>
+                
+                <div style="background: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                    <h5 style="color: #388e3c; font-size: 15px;">Why Provide Student Profile?</h5>
+                    <ul style="line-height: 1.8; color: #555;">
+                        <li>Automatically checks <strong>MOI eligibility</strong></li>
+                        <li>Filters universities with exceeded <strong>study gap</strong></li>
+                        <li>Validates <strong>CGPA/percentage</strong> requirements</li>
+                        <li>Shows only <strong>suitable universities</strong></li>
+                        <li>Saves time by removing unsuitable options</li>
+                        <li>Provides accurate categorization (MOI vs Regular)</li>
+                    </ul>
+                </div>
+
+                <h5 style="color: #388e3c; font-size: 15px;">Enter Student Information:</h5>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <tr style="background: #f5f5f5;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Field</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Purpose</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Example</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>FSc English Marks (%)</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">For MOI eligibility checking</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">70</td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Student CGPA</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Check eligibility (0-4 scale)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">3.0</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Student Percentage</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">If no CGPA available</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">75</td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Study Gap</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Critical filter - calculates years since last degree</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">3 Years</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>BA Marks (%)</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Required for some bachelor programs</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">65</td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Last Degree University</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">For MOI university-specific requirements</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">NUST, LUMS</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="color: #1976d2; font-size: 16px;">Step 4: Generate & View Results</h4>
+                <p style="color: #555; line-height: 1.8;">Click "<strong>Generate Advice</strong>" button. System will process and show <strong>two categories</strong>:</p>
+            </div>
+
+            <!-- Result Categories -->
+            <div style="margin: 25px 0;">
+                <div style="background: #f0fff0; padding: 20px; border-radius: 8px; border: 2px solid green; margin-bottom: 15px;">
+                    <h4 style="color: green; margin-top: 0; font-size: 16px;">Category 1: MOI Eligible Universities (GREEN BOX)</h4>
+                    <ul style="line-height: 1.8; color: #555;">
+                        <li>Student <strong>fully qualifies</strong> for MOI (Medium of Instruction)</li>
+                        <li><strong>NO English test required</strong> (No IELTS, PTE, TOEFL needed)</li>
+                        <li>Profile meets all MOI requirements</li>
+                        <li><strong>TOP PRIORITY</strong> - Recommend these first to students</li>
+                    </ul>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid #01411C; margin-bottom: 15px;">
+                    <h4 style="color: #01411C; margin-top: 0; font-size: 16px;">Category 2: Regular Universities (WHITE BOX)</h4>
+                    <ul style="line-height: 1.8; color: #555;">
+                        <li><strong>English language test required</strong> (IELTS/PTE/TOEFL/etc.)</li>
+                        <li>Student meets general CGPA requirements</li>
+                        <li>Within study gap limits</li>
+                        <li>Valid admission options if student has/can take English test</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h4 style="color: #1976d2; font-size: 16px;">Step 5: Select Universities</h4>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li>0 University is <strong>pre-selected by default</strong></li>
+                    <li>Use "<strong>Select All</strong>" or "<strong>Deselect All</strong>" buttons</li>
+                    <li>Manually check/uncheck specific universities</li>
+                    <li>Consider student's preferences: location, fee, scholarship</li>
+                    <li>Review initial deposit requirements</li>
+                    <li>Check English test requirements for regular universities</li>
+                </ul>
+            </div>
+
+            <div style="background: #e3f2fd; padding: 25px; border-radius: 8px; border-left: 4px solid #2196F3; margin: 20px 0;">
+                <h4 style="color: #1976d2; margin-top: 0; font-size: 16px;">Step 6: Download PDF and Show Preview</h4>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li>In the Show Preview button you can direclty click the copy button to get the advice ready to send on Whatsapp</li>
+                    <li>Click "<strong>Download PDF</strong>" button</li>
+                    <li>PDF will download automatically to your device</li>
+                    <li>Professional format ready to share with student</li>
+                    <li>Save copy for your records</li>
+                </ol>
+
+                <h5 style="color: #1976d2; margin-top: 20px; font-size: 15px;">Email and PDF Report Contains:</h5>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li>SAUK Islamabad official branding</li>
+                    <li>Student greeting message</li>
+                    <li>Total number of universities</li>
+                    <li>Each university with complete details</li>
+                    <li>Generated by: Your name (staff member)</li>
+                    <li>Date and time stamp</li>
+                    <li>Professional closing message</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 6: Tips -->
+        <div id="tips" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">6. Tips & Best Practices</h2>
+            
+            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #2e7d32; margin-top: 0; font-size: 17px;">Before Student Meeting:</h3>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li>Gather <strong>complete student information</strong> beforehand</li>
+                    <li>Verify all documents (FSc marksheet, BA degree, last degree)</li>
+                    <li>Calculate <strong>exact study gap</strong> (years between degrees)</li>
+                    <li>Note student's preferences: preferred country, budget constraints</li>
+                    <li>Ask about English language test status (already taken/planning to take)</li>
+                </ol>
+            </div>
+
+            <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #f57c00; margin-top: 0; font-size: 17px;">During Advice Generation:</h3>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li><strong>Always provide complete student profile</strong> - more accurate results</li>
+                    <li>Review <strong>both result categories</strong> carefully</li>
+                    <li>Explain the difference between MOI and Regular admission clearly</li>
+                    <li>Discuss English test requirements for regular universities</li>
+                    <li>Consider student's timeline and test preparation capacity</li>
+                    <li>Prioritize MOI eligible universities for faster admissions</li>
+                </ol>
+            </div>
+
+            <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #1976d2; margin-top: 0; font-size: 17px;">After Generating Report:</h3>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li><strong>Review PDF</strong> before sharing with student</li>
+                    <li>Discuss all options with student thoroughly</li>
+                    <li>Explain fee structures and payment schedules clearly</li>
+                    <li>Clarify scholarship availability and eligibility</li>
+                    <li>Save PDF copy for your records and follow-up</li>
+                    <li>Check the options by yourself for Afghan Students (free version don't have this filter)</li>
+                    <li>Must review the MOI options because you are on free version which do not contain extra verification features</li>
+                </ol>
+            </div>
+
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; border-left: 4px solid #f44336;">
+                <h3 style="color: #c62828; margin-top: 0; font-size: 17px;">Important Don'ts:</h3>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li>Don't share your login credentials with anyone</li>
+                    <li>Don't select CGPA and Percentage both on same time, it may effect your the response</li>
+                    <li>Don't send unnecessary emails, domain email might be blocked</li>
+                    <li>Don't skip student profile when generating advice</li>
+                    <li>Don't forget to logout after completing work</li>
+                    <li>Don't ignore MOI Filters while looking for moi advice</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Section 7: Version Comparison -->
+        <div id="comparison" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border: 2px solid #9c27b0;">
+            <h2 style="color: #01411C; border-bottom: 2px solid #9c27b0; padding-bottom: 10px; margin-bottom: 20px;">7. Version Comparison: Free vs Pro- Currently you are using the free version</h2>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #9c27b0, #7b1fa2);">
+                            <!-- First column (Feature) - 25% width -->
+                            <th style="padding: 15px; text-align: left; border: 1px solid #ddd; color: white; font-size: 16px; width: 25%;">Feature</th>
+                            <!-- Second column (Free) - 30% width -->
+                            <th style="padding: 15px; text-align: center; border: 1px solid #ddd; color: white; font-size: 16px; width: 30%;">Free Version</th>
+                            <!-- Third column (Pro) - 45% width (largest) -->
+                            <th style="padding: 15px; text-align: center; border: 1px solid #ddd; color: white; font-size: 16px; width: 45%;">Pro Version</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #f9f9f9;">
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 400;">Edit details in Email</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Can't edit anything</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">User can edit everything before sending email</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">PDF Editing</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Can't edit anything</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Can change everything</td>
+                        </tr>
+                        <tr style="background: #f9f9f9;">
+                           <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">MOI Features</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Manually reconfirmation required</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Auto verify all the details</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Bank Statement Calculator</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Not available at all</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Auto add required bank statement with course</td>
+                        </tr>
+                        <tr style="background: #f9f9f9;">
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Chat Features</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Not Available</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Staff can chat with each other</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Video Advertisements</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">N/A</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">User can see live company videos on dashboard</td>
+                        </tr>
+
+                        <tr style="background: #f9f9f9;">
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Login Details</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Can't change username, Password etc</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Can change password, username, designation etc</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Data Saving</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Can't save the generated advices</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">User can save the generated advices in his profile</td>
+                        </tr>
+                        <tr style="background: #f9f9f9;">
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Used email</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Sending Email is naveed@studyadvisers.com</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Use your brand main ID</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd; width: 25%; font-weight: 600;">Designing</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 30%;">Basic</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: center; width: 45%; color: green;">Advanced</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 8: Troubleshooting -->
+        <div id="troubleshooting" style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <h2 style="color: #01411C; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-bottom: 20px;">8. Troubleshooting</h2>
+            
+            <h3 style="color: #2e7d32; font-size: 17px;">Common Issues & Solutions:</h3>
+
+            <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                <h4 style="color: #856404; margin-top: 0; font-size: 16px;">Issue: "Sorry we are working on it"</h4>
+                <p style="color: #555; line-height: 1.8; margin: 10px 0 0 0;"><strong>Solution:</strong> If you see such message so please wait because admin might be working on this feature.</p>
+            </div>
+
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #f44336;">
+                <h4 style="color: #c62828; margin-top: 0; font-size: 16px;">Issue: "Account is locked"</h4>
+                <p style="color: #555; line-height: 1.8; margin: 5px 0;"><strong>Reason:</strong> When System detects the wrong password attempts</p>
+                <p style="color: #555; line-height: 1.8; margin: 5px 0;"><strong>Solution:</strong> Whatsapp admin 03016290781. Do not attempt more logins otherwise your profile will be locked permanantly.</p>
+            </div>
+
+            <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #2196F3;">
+                <h4 style="color: #1976d2; margin-top: 0; font-size: 16px;">Issue: "No universities found"</h4>
+                <p style="color: #555; line-height: 1.8; margin: 5px 0;"><strong>Confirm:</strong></p>
+                <ul style="color: #555; line-height: 1.8; margin-top: 5px;">
+                    <li>Use Less filters if need more number of universities</li>
+                    <li>Try broader search terms (e.g., "Business" instead of "MBA International Business")</li>
+                    <li>For MOI must use moi filters</li>
+                    <li>Use maximum filters to find the exact option</li>
+                </ul>
+            </div>
+
+            <div style="background: #f3e5f5; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #9c27b0;">
+                <h4 style="color: #7b1fa2; margin-top: 0; font-size: 16px;">Issue: "Email not sent"</h4>
+                <p style="color: #555; line-height: 1.8; margin: 5px 0;"><strong>Solutions:</strong></p>
+                <ul style="color: #555; line-height: 1.8; margin-top: 5px;">
+                    <li>Must select the universities from the checkbox</li>
+                    <li>Confirm that the email address exsits</li>
+                    <li>Check your internet connection</li>
+                    <li>Clear browser cache and try again</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #4CAF50;">
+                <h4 style="color: #388e3c; margin-top: 0; font-size: 16px;">Issue: "PDF not downloading"</h4>
+                <p style="color: #555; line-height: 1.8; margin: 5px 0;"><strong>Solutions:</strong></p>
+                <ul style="color: #555; line-height: 1.8; margin-top: 5px;">
+                    <li>Ensure at least one university is selected (checkbox checked)</li>
+                    <li>Try a different browser (Chrome recommended)</li>
+                    <li>Check browser pop-up blocker settings</li>
+                    <li>Ensure sufficient storage space on device</li>
+                    <li>Wait a few seconds - large PDFs take time</li>
+                </ul>
+            </div>
+
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #f44336;">
+                <h4 style="color: #c62828; margin-top: 0; font-size: 16px;">Issue: "Internal Server Error"</h4>
+                <p style="color: #555; line-height: 1.8; margin: 5px 0;"><strong>Solutions:</strong></p>
+                <ul style="color: #555; line-height: 1.8; margin-top: 5px;">
+                    <li>Move back to any option, refresh the page and then try again</li>
+                    <li>If error persists, Whatsapp admin 03016290781</li>
+                    <li>Clear browser cache and cookies</li>
+                    <li>Try accessing from different browser/device</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- System Information -->
+        <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #01411C;">
+            <h2 style="color: #01411C; margin-bottom: 15px; font-size: 18px;">System Information</h2>
+            <div style="line-height: 1.8; color: #555;">
+                <p><strong>System Version:</strong> FuTuRe FLoW v2.0</p>
+                <p><strong>Last Updated:</strong> 30 December 2025</p>
+                <p><strong>Developed By:</strong> M. Naveed Khan</p>
+                <p><strong>Organization:</strong> Study Advisers UK (SAUK) Islamabad</p>
+                <p><strong>Director:</strong> Ma'am Birjees Qasim</p>
+            </div>
+        </div>
+
+        <!-- Acknowledgment -->
+        <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px; border-left: 4px solid #4CAF50;">
+            <p style="color: #2e7d32; font-size: 15px; margin: 0;">
+                <strong>Developed by Naveed Khan</strong> for SAUK Islamabad, requested by <strong>Ma'am Birjees Qasim</strong><br>
+                Supported by <strong>Team Ariba</strong>
+            </p>
+        </div>
+
+        <!-- Professional Footer -->
+        <footer style="background: linear-gradient(135deg, #263238, #37474f); color: white; padding: 50px 30px; border-radius: 8px;">
+            <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
+                
+                <!-- About Section -->
+                <div>
+                    <h3 style="color: #4CAF50; margin-bottom: 15px; font-size: 18px; font-weight: 500;">About FuTuRe FLoW</h3>
+                    <p style="line-height: 1.8; font-size: 14px; color: #b0bec5;">FuTuRe FLow specifically designs the applications for maintaining the academic and financial records with complex and advanced features.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="color: #4CAF50; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 2; font-size: 14px;">
+                        <li><a href="#overview" style="color: #b0bec5; text-decoration: none;">System Overview</a></li>
+                        <li><a href="#login" style="color: #b0bec5; text-decoration: none;">Login & Setup</a></li>
+                        <li><a href="#advice" style="color: #b0bec5; text-decoration: none;">Generate Advice</a></li>
+                        <li><a href="#troubleshooting" style="color: #b0bec5; text-decoration: none;">Troubleshooting</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 style="color: #4CAF50; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Contact Information</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 2; font-size: 14px; color: #b0bec5;">
+                        <li><strong>Phone:</strong> +92 301 6290781</li>
+                        <li><strong>WhatsApp:</strong> +92 301 6290781</li>
+                        <li><strong>Email:</strong> naveedkhann029@gmail.com</li>
+                    </ul>
+                </div>
+
+                <!-- Office Location -->
+                <div>
+                    <h3 style="color: #4CAF50; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Office Address</h3>
+                    <p style="line-height: 1.8; font-size: 14px; color: #b0bec5;">
+                        P/O box Zammy Wala, Tehsil Kaloor Kot<br>
+                        District Bhakkar, Punjab<br>
+                        Pakistan<br>
+                        <strong>Hours:</strong> Sunday only, 9:00 AM - 9:00 PM
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div style="border-top: 1px solid #455a64; margin-top: 40px; padding-top: 25px; text-align: center;">
+                <p style="color: #b0bec5; font-size: 14px; margin: 0 0 10px 0;">
+                    <strong>FuTuRe FLoW</strong> - University Management System v2.0
+                </p>
+                <p style="color: #78909c; font-size: 13px; margin: 0;">
+                    © 2025 FuTuRe FLoW. All rights reserved. | Developed by Naveed Khan
+                </p>
+            </div>
+        </footer>
+
+    </div>
+</div>
+{% endblock %}

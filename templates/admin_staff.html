@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Manage Staff{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Admin Menu</h2>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+        <a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+        <a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+        <a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+        <a href="{{ url_for('logout') }}" style="background-color: #f44336; color: white;">Logout</a>
+    </div>
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        <h2>Staff Management</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Locked</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_members %}
+                <tr>
+                    <td>{{ staff.id }}</td>
+                    <td>{{ staff.username }}</td>
+                    <td>{{ staff.full_name }}</td>
+                    <td>{{ staff.email }}</td>
+                    <td>{{ staff.status }}</td>
+                    <td>{{ 'Yes' if staff.is_locked else 'No' }}</td>
+                    <td>{{ staff.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <a href="{{ url_for('admin_approve_staff', id=staff.id) }}" class="btn btn-primary">Approve</a>
+                        <a href="{{ url_for('admin_reject_staff', id=staff.id) }}" class="btn btn-warning">Reject</a>
+                        <a href="{{ url_for('admin_unlock_staff', id=staff.id) }}" class="btn btn-info">Unlock</a>
+                        <a href="{{ url_for('admin_delete_staff', id=staff.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                        <a href="{{ url_for('admin_view_verification', staff_id=staff.id) }}" class="btn btn-success">View Verification</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

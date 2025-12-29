@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - SAUK119</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .error-container {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            color: #01411C;
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .error-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .error-code {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #666;
+            margin-bottom: 25px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .sauk-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .sauk-logo span:nth-child(1) { color: #ff5252; }
+        .sauk-logo span:nth-child(2) { color: #ff5252; }
+        .sauk-logo span:nth-child(3) { color: #000000; }
+        .sauk-logo span:nth-child(4) { color: #ff5252; }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="sauk-logo">
+            <span>S</span>
+            <span>A</span>
+            <span>U</span>
+            <span>K</span>
+        </div>
+        
+        <div class="error-icon">⚠️</div>
+        
+        <h1 class="error-title">
+            {% if error %}
+                {{ error }}
+            {% else %}
+                Oops! Something went wrong
+            {% endif %}
+        </h1>
+        
+        <p class="error-message">
+            {% if error == "Page not found" %}
+                The page you're looking for doesn't exist or has been moved.
+            {% elif error == "Internal server error" %}
+                We're experiencing some technical difficulties. Please try again later.
+            {% else %}
+                An unexpected error occurred. Our team has been notified.
+            {% endif %}
+        </p>
+        
+        <div class="error-code">
+            Error Code: {% if error == "Page not found" %}404{% else %}500{% endif %}
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Go to Homepage</a>
+            <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
+            <a href="javascript:location.reload()" class="btn btn-secondary">Refresh Page</a>
+        </div>
+        
+        <p style="margin-top: 25px; color: #999; font-size: 12px;">
+            If the problem persists, contact support at 
+            <a href="whatsapp:03016290781" style="color: #4CAF50;">03016290781</a>
+        </p>
+    </div>
+</body>
+</html>

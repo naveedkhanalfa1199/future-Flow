@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - SAUK119{% endblock %}
+
+{% block body %}
+<div class="container">
+    <!-- Professional Sidebar -->
+    <div class="sidebar">
+        <h2>ADMIN PANEL</h2>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_add_university_detailed') }}">Add New University</a>
+        <a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+        <a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+        <a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+        <a href="{{ url_for('admin_login_activity') }}">Login Activity</a>
+        <a href="{{ url_for('admin_create_backup') }}">Create Backup</a>
+        <a href="{{ url_for('admin_change_password') }}">Change Password</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Beautiful Arabic Verse -->
+        <div style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); text-align: center; position: relative; overflow: hidden;">
+            <p style="font-family: 'Traditional Arabic', 'Amiri', serif; font-size: 32px; color: white; margin: 0 0 20px 0; text-shadow: 2px 2px 6px rgba(0,0,0,0.3); line-height: 1.8; position: relative; z-index: 1;">
+                **مَا تَوْفِيقِي إِلَّا بِاللَّهِ**
+            </p>
+            <p style="font-size: 16px; color: rgba(255,255,255,0.9); font-style: italic; margin: 0; text-shadow: 1px 1px 4px rgba(0,0,0,0.2); position: relative; z-index: 1;">
+                "And my success is not but through Allah"
+            </p>
+        </div>
+
+        <!-- Naveed Khan - Beautiful Display -->
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px 20px; border-radius: 10px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 40%; z-index: 0;"></div>
+            <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 40%; z-index: 0;"></div>
+
+            <h1 style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 50px; font-weight: bold; color: white; margin: 0; text-shadow: 1px 1px 6px rgba(0,0,0,0.3); letter-spacing: 8px; position: relative; z-index: 1; background: linear-gradient(45deg, #fff, #f0f0f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                NAVEED KHAN
+            </h1>
+            <p style="font-size: 20px; color: rgba(255,255,255,0.95); margin: 20px 0 0 0; font-weight: 300; letter-spacing: 4px; text-shadow: 1px 1px 5px rgba(0,0,0,0.2); position: relative; z-index: 1;">
+                DEVELOPER & ARCHITECT
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

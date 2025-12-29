@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAUK University Advice</title>
+    <style>
+        /* APKA PURANA CSS - BILKUL WAHI */
+        .email-container {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .email-header {
+            text-align: center;
+            padding: 25px 0;
+            background: linear-gradient(135deg, #01411C 0%, #0a7d3a 100%);
+            color: white;
+            border-bottom: 4px solid #FFD700;
+        }
+        
+        .email-header h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .email-header p {
+            margin: 5px 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .email-body {
+            padding: 30px;
+        }
+        
+        .greeting {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .section-header {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 25px 0 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .moi-eligible-header {
+            background: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            color: #2e7d32;
+        }
+        
+        .regular-header {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            color: #1565c0;
+        }
+        
+        .section-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 15px 0;
+            padding-left: 20px;
+        }
+        
+        .university-card {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid;
+        }
+        
+        .moi-eligible-card {
+            border-left-color: #4CAF50;
+            background: #f1f8e9;
+        }
+        
+        .regular-card {
+            border-left-color: #2196F3;
+            background: #e8f4fd;
+        }
+        
+        .university-card h3 {
+            color: #01411C;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .info-table td {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            vertical-align: top;
+        }
+        
+        .info-table td:first-child {
+            font-weight: bold;
+            color: #333;
+            width: 35%;
+            padding-right: 10px;
+        }
+        
+        .moi-status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .moi-accepted {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .moi-not-accepted {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .english-tests {
+            background: #f3e5f5;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 3px solid #7b1fa2;
+        }
+        
+        .email-footer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .signature {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header - PURANA WALA HI -->
+        <div class="email-header">
+            <h2>SAUK - University Advice</h2>
+            <p>Study Advisers Islamabad</p>
+        </div>
+        
+        <!-- Body - APKA PURANA TEMPLATE WAHI -->
+        <div class="email-body">
+            <div class="greeting">
+                <p>Dear Student,</p>
+                <p>
+                   We have shared the following <strong>{{ total_universities }}</strong> universities based on the profile you have shared with us.
+                   Please share if you have additional information that may affect this advice. Please note, these options are not a comprehensive 
+                   list of options. We are able to provide you with additional options based on your updated requirements.
+                </p>
+            </div>
+            
+            <!-- MOI Eligible Universities -->
+            {% if moi_eligible_count > 0 %}
+            <div class="section-header moi-eligible-header">
+                ✅ MOI Eligible Universities ({{ moi_eligible_count }})
+            </div>
+            <div class="section-subtitle">
+                Student fully qualifies for Medium of Instruction. <strong>No English test required!</strong>
+            </div>
+            
+            {% for uni in moi_eligible %}
+            <div class="university-card moi-eligible-card">
+                <h3>{{ uni.university_name }}</h3>
+                <table class="info-table">
+                    <tr>
+                        <td>Country:</td>
+                        <td>{{ uni.country or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Location:</td>
+                        <td>{{ uni.location or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Course:</td>
+                        <td>{{ uni.matched_field.matched_course if uni.matched_field.matched_course else uni.matched_field.field_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Level:</td>
+                        <td>{{ uni.matched_field.course_level or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Intake:</td>
+                        <td>{{ uni.matched_field.intake or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Duration:</td>
+                        <td>{{ uni.matched_field.duration or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Fee:</td>
+                        <td>{{ uni.matched_field.total_fee or 'N/A' }}</td>
+                    </tr>
+                    <!-- INITIAL DEPOSIT ADDED -->
+                    <tr>
+                        <td>Initial Deposit:</td>
+                        <td>{{ uni.matched_field.initial_deposit or 'N/A' }}</td>
+                    </tr>
+                    {% if uni.matched_field.scholarship %}
+                    <tr>
+                        <td>Scholarship:</td>
+                        <td>{{ uni.matched_field.scholarship }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>MOI Status:</td>
+                        <td><span class="moi-status moi-accepted">✅ MOI Accepted</span></td>
+                    </tr>
+                </table>
+            </div>
+            {% endfor %}
+            {% endif %}
+            
+            <!-- Regular Universities -->
+            {% if regular_count > 0 %}
+            <div class="section-header regular-header">
+                📘 Regular Universities ({{ regular_count }})
+            </div>
+            <div class="section-subtitle">
+                English language test required (IELTS/PTE/TOEFL/etc.)
+            </div>
+            
+            {% for uni in regular %}
+            <div class="university-card regular-card">
+                <h3>{{ uni.university_name }}</h3>
+                <table class="info-table">
+                    <tr>
+                        <td>Country:</td>
+                        <td>{{ uni.country or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Location:</td>
+                        <td>{{ uni.location or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Course:</td>
+                        <td>{{ uni.matched_field.matched_course if uni.matched_field.matched_course else uni.matched_field.field_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Level:</td>
+                        <td>{{ uni.matched_field.course_level or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Intake:</td>
+                        <td>{{ uni.matched_field.intake or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Duration:</td>
+                        <td>{{ uni.matched_field.duration or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Fee:</td>
+                        <td>{{ uni.matched_field.total_fee or 'N/A' }}</td>
+                    </tr>
+                    <!-- INITIAL DEPOSIT ADDED -->
+                    <tr>
+                        <td>Initial Deposit:</td>
+                        <td>{{ uni.matched_field.initial_deposit or 'N/A' }}</td>
+                    </tr>
+                    {% if uni.matched_field.scholarship %}
+                    <tr>
+                        <td>Scholarship:</td>
+                        <td>{{ uni.matched_field.scholarship }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    <!-- MOI Status for regular universities -->
+                    {% if uni.matched_field.moi_required == 'yes' %}
+                    <tr>
+                        <td>MOI Status:</td>
+                        <td><span class="moi-status moi-not-accepted">✗ MOI Not Accepted</span></td>
+                    </tr>
+                    {% endif %}
+                </table>
+                
+                <!-- English Tests -->
+                {% if uni.matched_field.english_tests_parsed %}
+                <div class="english-tests">
+                    <strong>English Tests Accepted:</strong>
+                    {% for test in uni.matched_field.english_tests_parsed %}
+                    {{ test.test }}{% if test.score and test.score|trim %} (min {{ test.score }}){% endif %}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+                {% elif uni.matched_field.english_tests %}
+                <div class="english-tests">
+                    <strong>English Tests Accepted:</strong>
+                    {{ uni.matched_field.english_tests }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endif %}
+            
+            <p style="margin-top: 30px;">Please reply to this email if you wish to proceed with our advice or contact your dedicated admission officer to proceed your application.</p>
+        </div>
+            
+        <!-- SHORELIGHT STYLE FOOTER -->
+        <div class="email-footer" style="text-align: center; width: 100%; padding: 20px 0;">
+            <!-- SHORELIGHT Style Footer -->
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #ddd; display: inline-block; max-width: 600px; text-align: center;">
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #FF0000; font-size: 19px;">SAUK - Study Advisers</strong><br>
+                    <span style="color: #666; font-size: 13px;">Helping students in achieving dreams</span>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <a href="https://www.facebook.com/sauk.Isb" style="color: #0066cc; text-decoration: none; margin: 0 8px; font-size: 12px;">Facebook Page</a>
+                    <span style="color: #ccc; margin: 0 5px;">|</span>
+                    <a href="https://www.youtube.com/@SAUK-ISLAMABAD/videos" style="color: #0066cc; text-decoration: none; margin: 0 8px; font-size: 12px;">Youtube Channel</a>
+                    <span style="color: #ccc; margin: 0 5px;">|</span>
+                    <a href="https://www.studyadvisers.com/apply-now" style="color: #0066cc; text-decoration: none; margin: 0 8px; font-size: 12px;">Official Website</a>
+                </div>
+                
+                <div style="font-size: 12px; color: #666; margin: 10px 0;">
+                    © 2025 SAUK - Study Advisers
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <a href="#" style="color: #cc0000; text-decoration: underline; font-size: 11px;">
+                        Unsubscribe from all future emails
+                    </a>
+                </div>
+                
+                <div style="font-size: 12px; color: #01411C; line-height: 1.5; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <strong>Office Address:</strong><br>
+                    Office No# 04, Shalimar Plaza, Jinnah Avenue, Blue Area<br>
+                    Islamabad, Pakistan
+                </div>
+                
+                <div style="font-size: 11px; color: #999; margin-top: 10px;">
+                    This advice is generated by SAUK system on {{ current_date }}.
+                </div>
+                
+                <!-- Orange Bar -->
+                <div style="height: 4px; background: #e67e22; margin-top: 20px; border-radius: 2px;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,947 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Field - {{ university.university_name }} {% endblock %}
+
+{% block body %}
+{% with hardcoded_english_tests=english_tests %}
+
+<!-- ===== ADD THIS RIGHT HERE ===== -->
+<script>
+// VERY FIRST FUNCTION - ADD COURSE
+window.addCourse = function() {
+    console.log("🎯 ADD COURSE FUNCTION CALLED");
+    
+    // Count existing courses
+    const selects = document.querySelectorAll('select[name^="course_"]');
+    let nextNum = selects.length + 1;
+    console.log("Adding course #", nextNum);
+    
+    // Create HTML
+    const newCourseHTML = `
+        <div style="display:flex;gap:5px;margin-bottom:8px">
+            <select name="course_${nextNum}" class="professional-select" style="flex:1">
+                <option value="">Select Course</option>
+            </select>
+            <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+        </div>
+    `;
+    
+    // Add to page
+    const container = document.getElementById('coursesContainer');
+    if (container) {
+        container.insertAdjacentHTML('beforeend', newCourseHTML);
+        console.log("✅ Course dropdown added");
+        
+        // Load courses if level selected
+        const levelSelect = document.querySelector('select[name="course_level"]');
+        if (levelSelect && levelSelect.value) {
+            console.log("Loading courses for level:", levelSelect.value);
+            fetch(`/api/courses/${levelSelect.value}`)
+                .then(r => r.json())
+                .then(courses => {
+                    const newSelect = document.querySelector(`select[name="course_${nextNum}"]`);
+                    if (newSelect) {
+                        newSelect.innerHTML = '<option value="">Select Course</option>';
+                        courses.forEach(course => {
+                            newSelect.innerHTML += `<option value="${course.value}">${course.value}</option>`;
+                        });
+                        console.log(`✅ Loaded ${courses.length} courses`);
+                    }
+                });
+        }
+    }
+};
+console.log("📝 addCourse function defined");
+</script>
+
+<div class="container">
+
+<div class="sidebar">
+
+<h2>Admin Menu</h2>
+
+<a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+
+<a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+
+<a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+
+<a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+
+<a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+
+<a href="{{ url_for('logout') }}" style="background-color: #f44336; color: white;">Logout</a>
+
+</div>
+
+<div class="content">
+
+<h2>Edit Field - {{ university.university_name }}</h2>
+
+<a href="{{ url_for('admin_view_fields', id=university.id) }}" class="btn btn-primary" style="margin-bottom: 20px;">
+
+← Back to Fields
+
+</a>
+
+<form method="POST" id="editFieldForm">
+
+<!-- Basic Field Info -->
+<div class="card professional-card">
+
+<h3 class="section-title"> Field Information</h3>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Field Name *</label>
+
+<select name="field_name" required class="professional-select">
+    <option value="">Select Field Name</option>
+    {% for fname in field_names %}
+    <option value="{{ fname }}" {% if field.field_name == fname %}selected{% endif %}>{{ fname }}</option>
+    {% endfor %}
+</select>
+
+</div>
+
+<div class="form-group">
+    <label>Course Level *</label>
+    <select name="course_level" required class="professional-select">
+        <option value="">Select Level</option>
+        {% for level in levels %}
+            <option value="{{ level.value }}" {% if field.course_level == level.value %}selected{% endif %}>
+                {{ level.value }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+
+<label>Duration *</label>
+
+<select name="duration" required class="professional-select">
+    <option value="">Select Duration</option>
+    {% for duration_option in durations %}
+        <option value="{{ duration_option }}" {% if field.duration == duration_option %}selected{% endif %}>
+            {{ duration_option }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Intake *</label>
+
+<select name="intake" required class="professional-select">
+    <option value="">Select Intake</option>
+    {% for intake_option in intakes %}
+        <option value="{{ intake_option }}" {% if field.intake == intake_option %}selected{% endif %}>
+            {{ intake_option }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+</div>
+
+<!-- Course Names -->
+<div class="form-group">
+    <label>Course Names</label>
+    <div id="coursesContainer">
+    {% for course in courses_list %}
+    <select name="course_{{ loop.index }}" class="professional-select course-select" data-course-index="{{ loop.index }}" style="margin-bottom: 8px;">
+        <option value="">Select Course</option>
+        {% for course_option in course_names %}
+        {% if course_option.parent_value == field.course_level %}
+        <option value="{{ course_option.value }}" {% if course_option.value == course.strip() %}selected{% endif %}>
+            {{ course_option.value }}
+        </option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    {% endfor %}
+    {% if not courses_list %}
+    <select name="course_1" class="professional-select course-select" data-course-index="1">
+        <option value="">Select Course</option>
+        {% for course_option in course_names %}
+        {% if course_option.parent_value == field.course_level %}
+        <option value="{{ course_option.value }}">{{ course_option.value }}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+    {% endif %}
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="addCourse()" style="margin-top: 8px;">
+        ► Add Another Course
+    </button>
+    <small style="color: #666; display: block; margin-top: 5px;">
+        Select course level first to load available courses
+    </small>
+</div>
+
+</div>
+
+<!-- MOI Section -->
+<div class="card professional-card">
+
+<h3 class="section-title"> MOI Requirements</h3>
+
+<div class="form-group">
+
+<label>MOI Required</label>
+
+<select name="moi_required" onchange="toggleMOI()" class="professional-select">
+
+<option value="no" {% if field.moi_required == 'no' %}selected{% endif %}>No</option>
+
+<option value="yes" {% if field.moi_required == 'yes' %}selected{% endif %}>Yes</option>
+
+</select>
+
+</div>
+
+<div id="moiSection" class="moi-container" style="display: {% if field.moi_required == 'yes' %}block{% else %}none{% endif %};">
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Max Study Gap for MOI</label>
+
+<select name="moi_gap_years" class="professional-select">
+    <option value="">Select Study Gap</option>
+    {% for gap in study_gaps %}
+        <option value="{{ gap }}" {% if field.moi_gap_years == gap %}selected{% endif %}>
+            {{ gap }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+<div class="form-group">
+    <label>Min CGPA for MOI</label>
+    <select name="moi_min_cgpa" class="professional-select">
+        <option value="">Select Min CGPA</option>
+        {% for cgpa in moi_min_cgpa %}
+            <option value="{{ cgpa }}" {% if field.moi_min_cgpa == cgpa %}selected{% endif %}>
+                {{ cgpa }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Min Percentage for MOI</label>
+    <select name="moi_min_percentage" class="professional-select">
+        <option value="">Select Min %</option>
+        {% for percent in moi_min_percentage %}
+            <option value="{{ percent }}" {% if field.moi_min_percentage == percent %}selected{% endif %}>
+                {{ percent }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Min FSc % for MOI</label>
+    <select name="moi_min_fsc" class="professional-select">
+        <option value="">Select Min FSc %</option>
+        {% for fsc_percent in moi_min_fsc %}
+            <option value="{{ fsc_percent }}" {% if field.moi_min_fsc == fsc_percent %}selected{% endif %}>
+                {{ fsc_percent }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+</div>
+
+<div class="form-grid">
+<div class="form-group">
+<label>2+2 Degree Accepted</label>
+<select name="moi_two_plus_two" class="professional-select">
+<option value="no" {% if field.moi_two_plus_two == 'no' %}selected{% endif %}>No</option>
+<option value="yes" {% if field.moi_two_plus_two == 'yes' %}selected{% endif %}>Yes</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Last Degree University</label>
+<select name="moi_university_type" onchange="toggleUniversityList()" class="professional-select">
+<option value="all" {% if field.moi_university_type == 'all' %}selected{% endif %}>All Pak Universities</option>
+<option value="specific" {% if field.moi_university_type == 'specific' %}selected{% endif %}>Specific Universities</option>
+</select>
+</div>
+</div>
+
+<div id="universityList" class="university-checklist" style="display: {% if field.moi_university_type == 'specific' %}block {% else %}none {% endif %}};">
+<label>Select Specific Universities</label>
+<div class="checkbox-grid">
+{% if field.moi_accepted_universities %}
+    {% set accepted_unis = field.moi_accepted_universities %}
+{% else %}
+    {% set accepted_unis = [] %}
+{% endif %}
+{% for uni in pakistani_universities %}
+<div class="checkbox-item">
+    <input type="checkbox" name="moi_universities" value="{{ uni }}" id="uni_{{ uni|replace(' ', '_') }}" {% if uni in accepted_unis %}checked{% endif %}>
+    <label for="uni_{{ uni|replace(' ', '_') }}">{{ uni }}</label>
+</div>
+{% endfor %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Entry Requirements -->
+<div class="card professional-card">
+
+<h3 class="section-title">Bachelor Entry Requirements</h3>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>FSc Cut-off Marks (Direct Admission)</label>
+
+<select name="fsc_cutoff_marks" class="professional-select">
+    {% for cutoff in fsc_cutoffs %}
+        <option value="{{ cutoff }}" {% if field.fsc_cutoff_marks == cutoff %}selected{% endif %}>
+            {{ cutoff }}
+        </option>
+    {% endfor %}
+</select>
+
+<small>If student has these FSc marks, BA not required</small>
+
+</div>
+
+<div class="form-group">
+
+<label>BA Required Below Cut-off</label>
+
+<select name="ba_required_below_cutoff" class="professional-select">
+
+<option value="no" {% if field.ba_required_below_cutoff == 'no' %}selected{% endif %}>No</option>
+
+<option value="yes" {% if field.ba_required_below_cutoff == 'yes' %}selected{% endif %}>Yes</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Min FSc Marks (With BA)</label>
+
+<select name="min_fsc_marks_with_ba" class="professional-select">
+    <option value="">Select Min FSc %</option>
+    {% for fsc_ba in min_fsc_with_ba %}
+        <option value="{{ fsc_ba }}" {% if field.min_fsc_marks_with_ba == fsc_ba %}selected{% endif %}>
+            {{ fsc_ba }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>Min BA Marks Required</label>
+
+<select name="min_ba_marks" class="professional-select">
+    <option value="">Select Min BA %</option>
+    {% for ba_mark in min_ba_marks %}
+        <option value="{{ ba_mark }}" {% if field.min_ba_marks == ba_mark %}selected{% endif %}>
+            {{ ba_mark }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- General Requirements -->
+<div class="card professional-card">
+
+<h3 class="section-title">General Requirements</h3>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>General Minimum CGPA (Non-MOI)</label>
+
+<select name="general_min_cgpa" class="professional-select">
+    <option value="">Select General CGPA</option>
+    {% for cgpa in cgpas %}
+        <option value="{{ cgpa }}" {% if field.general_min_cgpa == cgpa %}selected{% endif %}>
+            {{ cgpa }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+<div class="form-group">
+    <label>General Minimum Percentage (Non-MOI)</label>
+<select name="general_min_percentage" class="professional-select">
+    <option value="">Select General %</option>
+    
+    {% set db_value = field.general_min_percentage %}
+    {% set db_clean = db_value|string|replace('%', '')|trim %}
+    
+    {% for num in range(40, 91) %}
+        <option value="{{ num }}%" {% if db_clean == num|string %}selected{% endif %}>
+            {{ num }}%
+        </option>
+    {% endfor %}
+</select>
+</div>
+
+<div class="form-group">
+
+<label>General Maximum Study Gap (Non-MOI)</label>
+
+<select name="general_max_study_gap" class="professional-select">
+    <option value="">No Restrictions</option>
+    {% for gap in study_gaps %}
+        <option value="{{ gap }}" {% if field.general_max_study_gap == gap %}selected{% endif %}>
+            {{ gap }}
+        </option>
+    {% endfor %}
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- English Tests -->
+<div class="card professional-card">
+    <h3 class="section-title">Accepted English Tests</h3>
+    <div class="english-tests-container-edit">
+    {% set hardcoded_english_tests = english_tests %}
+        {# English tests already parsed in backend - use selected_tests_list #}
+
+        <button type="button" class="english-test-toggle-edit" id="englishToggleBtn">
+            ☑ Select English Tests
+        </button>
+        
+        <div id="testBoxesEdit" class="test-boxes-container-edit">
+            
+            <!-- IELTS UKVI -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="IELTS UKVI" id="test_edit_ielts_ukvi"
+                        {% if 'IELTS UKVI' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('ielts_ukvi')">
+                    <label for="test_edit_ielts_ukvi">IELTS UKVI</label>
+                </div>
+                <div id="dropdown_edit_ielts_ukvi" class="test-dropdown-edit" {% if 'IELTS UKVI' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="ielts_ukvi_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['ielts_ukvi']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('IELTS UKVI') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- PTE UKVI -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="PTE UKVI" id="test_edit_pte_ukvi"
+                        {% if 'PTE UKVI' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('pte_ukvi')">
+                    <label for="test_edit_pte_ukvi">PTE UKVI</label>
+                </div>
+                <div id="dropdown_edit_pte_ukvi" class="test-dropdown-edit" {% if 'PTE UKVI' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="pte_ukvi_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['pte_ukvi']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('PTE UKVI') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Oxford ELLT -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="Oxford ELLT" id="test_edit_oxford_ellt"
+                        {% if 'Oxford ELLT' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('oxford_ellt')">
+                    <label for="test_edit_oxford_ellt">Oxford ELLT</label>
+                </div>
+                <div id="dropdown_edit_oxford_ellt" class="test-dropdown-edit" {% if 'Oxford ELLT' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="oxford_ellt_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['oxford_ellt']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('Oxford ELLT') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- ESOL -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="ESOL" id="test_edit_esol"
+                        {% if 'ESOL' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('esol')">
+                    <label for="test_edit_esol">ESOL</label>
+                </div>
+                <div id="dropdown_edit_esol" class="test-dropdown-edit" {% if 'ESOL' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="esol_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['esol']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('ESOL') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- TOEFL -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="TOEFL" id="test_edit_toefl"
+                        {% if 'TOEFL' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('toefl')">
+                    <label for="test_edit_toefl">TOEFL</label>
+                </div>
+                <div id="dropdown_edit_toefl" class="test-dropdown-edit" {% if 'TOEFL' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="toefl_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['toefl']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('TOEFL') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Duolingo -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="Duolingo" id="test_edit_duolingo"
+                        {% if 'Duolingo' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('duolingo')">
+                    <label for="test_edit_duolingo">Duolingo</label>
+                </div>
+                <div id="dropdown_edit_duolingo" class="test-dropdown-edit" {% if 'Duolingo' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="duolingo_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['duolingo']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('Duolingo') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- IELTS Academic -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="IELTS Academic" id="test_edit_ielts_academic"
+                        {% if 'IELTS Academic' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('ielts_academic')">
+                    <label for="test_edit_ielts_academic">IELTS Academic</label>
+                </div>
+                <div id="dropdown_edit_ielts_academic" class="test-dropdown-edit" {% if 'IELTS Academic' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="ielts_academic_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['ielts_academic']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('IELTS Academic') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- PTE Academic -->
+            <div class="test-item-edit">
+                <div class="test-header-edit">
+                    <input type="checkbox" name="english_test" value="PTE Academic" id="test_edit_pte_academic"
+                        {% if 'PTE Academic' in selected_tests_list %}checked{% endif %}
+                        onchange="toggleTestDropdownEdit('pte_academic')">
+                    <label for="test_edit_pte_academic">PTE Academic</label>
+                </div>
+                <div id="dropdown_edit_pte_academic" class="test-dropdown-edit" {% if 'PTE Academic' in selected_tests_list %}style="display: block;"{% endif %}>
+                    <select name="pte_academic_score" class="professional-select">
+                        <option value="">Min Score</option>
+                        {% for score in hardcoded_english_tests['pte_academic']['scores'] %}
+                        <option value="{{ score }}" {% if test_scores.get('PTE Academic') == score|string %}selected{% endif %}>{{ score }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Financial Information -->
+<div class="card professional-card">
+
+<h3 class="section-title">Financial Information</h3>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Total Fee</label>
+
+<input type="text" name="total_fee" value="{{ field.total_fee or '' }}" placeholder="e.g., £25,000" class="professional-input">
+
+</div>
+
+<div class="form-group">
+
+<label>Initial Deposit</label>
+
+<input type="text" name="initial_deposit" value="{{ field.initial_deposit or '' }}" placeholder="e.g., £2,000" class="professional-input">
+
+</div>
+
+<div class="form-group">
+
+<label>Scholarship</label>
+
+<input type="text" name="scholarship" value="{{ field.scholarship or '' }}" placeholder="e.g., Merit-based, Available" class="professional-input">
+
+</div>
+
+</div>
+
+</div>
+
+<div class="form-actions">
+
+<button type="submit" class="btn btn-success btn-large">
+
+Update Field
+
+</button>
+
+<a href="{{ url_for('admin_view_fields', id=university.id) }}" class="btn btn-danger">
+
+Cancel
+
+</a>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+// SIMPLE VERSION - NO COMPLEXITY
+
+// 1. FIRST THING: Show pre-selected tests IMMEDIATELY
+function showEnglishTestsNow() {
+    console.log("🔄 Checking for pre-selected English tests...");
+    const container = document.getElementById('testBoxesEdit');
+    const button = document.querySelector('.english-test-toggle-edit');
+    
+    if (!container) {
+        console.error("❌ testBoxesEdit container not found!");
+        return;
+    }
+    
+    if (!button) {
+        console.error("❌ English toggle button not found!");
+        return;
+    }
+    
+    // Check if ANY test is checked
+    const checkedTests = document.querySelectorAll('#testBoxesEdit input[type="checkbox"]:checked');
+    console.log("📊 Checked tests found:", checkedTests.length);
+    
+    if (checkedTests.length > 0) {
+        console.log("✅ Found pre-selected tests - SHOWING container");
+        container.style.display = 'grid';
+        button.classList.add('active');
+        button.textContent = '▼ English Tests Selected';
+        
+        // Also show dropdowns for checked tests
+        checkedTests.forEach(checkbox => {
+            const testId = checkbox.id;
+            const testKey = testId.replace('test_edit_', '');
+            const dropdown = document.getElementById('dropdown_edit_' + testKey);
+            if (dropdown) {
+                dropdown.style.display = 'block';
+                console.log("📋 Showing dropdown for:", testKey);
+            }
+        });
+    } else {
+        console.log("ℹ️ No pre-selected tests found");
+        container.style.display = 'none';
+        button.classList.remove('active');
+        button.textContent = '☑ Select English Tests';
+    }
+}
+
+// 2. SIMPLE TOGGLE FUNCTION
+function toggleEnglishTests() {
+    console.log("🔘 Toggle button clicked");
+    const container = document.getElementById('testBoxesEdit');
+    const button = document.querySelector('.english-test-toggle-edit');
+    
+    if (container && button) {
+        if (container.style.display === 'none' || container.style.display === '') {
+            container.style.display = 'grid';
+            button.classList.add('active');
+            button.textContent = '▼ English Tests Selected';
+            console.log("📤 Container shown");
+        } else {
+            container.style.display = 'none';
+            button.classList.remove('active');
+            button.textContent = '☑ Select English Tests';
+            console.log("📥 Container hidden");
+        }
+    }
+}
+
+// 3. PAGE LOAD INITIALIZATION
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 DOM fully loaded");
+    
+    // FIRST: Show pre-selected tests
+    showEnglishTestsNow();
+    
+    // SECOND: Setup button click
+    const toggleBtn = document.querySelector('.english-test-toggle-edit');
+    if (toggleBtn) {
+        // Remove any old onclick
+        toggleBtn.removeAttribute('onclick');
+        
+        // Add new event listener
+        toggleBtn.addEventListener('click', toggleEnglishTests);
+        console.log("✅ Button event listener attached");
+    }
+    
+    // THIRD: Setup other dropdowns
+    const levelSelect = document.querySelector('select[name="course_level"]');
+    if (levelSelect) {
+        levelSelect.addEventListener('change', function() {
+            // Your course dropdown update code here
+        });
+    }
+    
+    console.log("🎉 All initialization complete");
+});
+
+// 4. FALLBACK: Also run on window load
+window.onload = function() {
+    console.log("🖥️ Window fully loaded");
+    setTimeout(showEnglishTestsNow, 100); // Small delay
+};
+
+console.log("📝 Script loaded successfully");
+</script>
+
+<style>
+.professional-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.professional-input, .professional-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+}
+
+.professional-input:focus, .professional-select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.moi-container {
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    border-left: 4px solid #2196F3;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.english-tests-container-edit {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 6px;
+    background: #f9f9f9;
+}
+
+.english-test-toggle-edit {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+}
+
+.english-test-toggle-edit.active {
+    background: #28a745;
+}
+
+.test-boxes-container-edit {
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+}
+
+.test-item-edit {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+.test-header-edit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.test-header-edit input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.test-dropdown-edit {
+    display: none;
+    margin-top: 8px;
+}
+
+.test-dropdown-edit select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-large {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+}
+</style>
+
+{% endwith %}
+{% endblock %}

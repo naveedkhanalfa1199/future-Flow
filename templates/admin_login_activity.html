@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Login Activity{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Admin Menu</h2>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+        <a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+        <a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+        <a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+        <a href="{{ url_for('logout') }}" style="background-color: #f44336; color: white;">Logout</a>
+    </div>
+    <div class="content">
+        <h2>Login Activity</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attempt in attempts %}
+                <tr>
+                    <td>{{ attempt.id }}</td>
+                    <td>{{ attempt.username }}</td>
+                    <td>{{ attempt.attempt_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        {% if attempt.success %}
+                        <span style="color: green; font-weight: bold;">Success</span>
+                        {% else %}
+                        <span style="color: red; font-weight: bold;">Failed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

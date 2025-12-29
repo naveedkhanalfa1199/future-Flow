@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Edit University - {{ uni.university_name }}{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+<div class="sidebar">
+
+<h2>Admin Menu</h2>
+
+<a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+
+<a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+
+<a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+
+<a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+
+<a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+
+<a href="{{ url_for('logout') }}" class="logout">Logout</a>
+
+</div>
+
+<div class="content">
+
+<h2>Edit University - {{ uni.university_name }}</h2>
+
+<form method="POST">
+
+<!-- Basic University Info -->
+<div class="card professional-card">
+    <div class="form-group">
+        <label>University Name *</label>
+        <input type="text" name="university_name" value="{{ uni.university_name }}" required class="professional-input">
+    </div>
+
+    <!-- Country Dropdown -->
+    <div class="form-group">
+        <label>Country *</label>
+        <select name="country" id="country" required class="professional-select" onchange="loadHardcodedLocations(this.value)">
+            <option value="">Select Country</option>
+            <option value="United Kingdom" {% if uni.country == 'United Kingdom' %}selected{% endif %}>United Kingdom</option>
+            <option value="United States" {% if uni.country == 'United States' %}selected{% endif %}>United States</option>
+            <option value="Canada" {% if uni.country == 'Canada' %}selected{% endif %}>Canada</option>
+            <option value="Australia" {% if uni.country == 'Australia' %}selected{% endif %}>Australia</option>
+            <option value="Hungary" {% if uni.country == 'Hungary' %}selected{% endif %}>Hungary</option>
+            <option value="Germany" {% if uni.country == 'Germany' %}selected{% endif %}>Germany</option>
+        </select>
+    </div>
+
+    <!-- Locations -->
+    <div class="form-group">
+        <label>Locations (Select Multiple)</label>
+        <div id="locationCheckboxes" class="checkbox-container">
+            {% set current_locations = uni.location_list if uni.location_list else [] %}
+            {% if uni.country %}
+                <script>loadHardcodedLocationsEdit('{{ uni.country }}', {{ current_locations|tojson }})</script>
+            {% else %}
+                <p class="placeholder-text">Select country first to load locations</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="form-actions">
+    <button type="submit" class="btn btn-success btn-large">Update University</button>
+    <a href="{{ url_for('admin_universities') }}" class="btn btn-danger">Cancel</a>
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+// HARDCODED COUNTRY-LOCATIONS DATA
+const hardcodedCountryLocations = {
+    'United Kingdom': ['London', 'Manchester', 'Birmingham', 'Liverpool', 'Leeds', 'Glasgow', 'Southwales', 'Canterbury', 'Bedford', 'Bristol', 'Edinburgh', 'Sheffield', 'Leicester', 'Coventry', 'Bradford', 'Newcastle', 'Notingham', 'Derby'],
+    'United States': ['New York', 'California', 'Texas', 'Florida', 'Chicago'],
+    'Canada': ['Toronto', 'Vancouver', 'Montreal', 'Calgary', 'Ottawa'],
+    'Australia': ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide'],
+    'Hungary': ['Budhapest', 'Debrecen', 'Szeged', 'Miskolc', 'Eger'],
+    'Germany': ['Berlin', 'Munich', 'Frankfurt', 'Hamburg', 'Cologne']
+};
+
+function loadHardcodedLocations(country) {
+    const container = document.getElementById('locationCheckboxes');
+    container.innerHTML = '';
+    if (country && hardcodedCountryLocations[country]) {
+        const locations = hardcodedCountryLocations[country];
+        locations.forEach(location => {
+            const div = document.createElement('div');
+            div.className = 'checkbox-item';
+            div.innerHTML = `
+                <input type="checkbox" name="locations" value="${location}" id="loc_${location.replace(/\s+/g, '_')}">
+                <label for="loc_${location.replace(/\s+/g, '_')}">${location}</label>
+            `;
+            container.appendChild(div);
+        });
+    } else {
+        container.innerHTML = '<p class="placeholder-text">No locations found for this country</p>';
+    }
+}
+
+function loadHardcodedLocationsEdit(country, currentLocations) {
+    const container = document.getElementById('locationCheckboxes');
+    container.innerHTML = '';
+    if (country && hardcodedCountryLocations[country]) {
+        const locations = hardcodedCountryLocations[country];
+        locations.forEach(location => {
+            const isChecked = currentLocations.includes(location);
+            const div = document.createElement('div');
+            div.className = 'checkbox-item';
+            div.innerHTML = `
+                <input type="checkbox" name="locations" value="${location}" id="loc_${location.replace(/\s+/g, '_')}" ${isChecked ? 'checked' : ''}>
+                <label for="loc_${location.replace(/\s+/g, '_')}">${location}</label>
+            `;
+            container.appendChild(div);
+        });
+    } else {
+        container.innerHTML = '<p class="placeholder-text">No locations found for this country</p>';
+    }
+}
+</script>
+
+<style>
+.professional-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.professional-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.professional-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.professional-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.professional-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.checkbox-container {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9f9f9;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-item label {
+    cursor: pointer;
+    margin: 0;
+    font-weight: normal;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-danger {
+    background: #f44336;
+    color: white;
+}
+
+.btn-large {
+    padding: 15px 30px;
+    font-size: 16px;
+}
+
+.placeholder-text {
+    color: #999;
+    font-style: italic;
+    margin: 0;
+}
+</style>
+
+{% endblock %}

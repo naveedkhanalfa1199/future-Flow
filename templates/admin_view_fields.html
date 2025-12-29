@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Fields - {{ university.university_name }}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Admin Menu</h2>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+        <a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+        <a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+        <a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+
+    <div class="content">
+        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 25px;">
+            <h2>Manage Fields - {{ university.university_name }}</h2>
+            <a href="{{ url_for('admin_universities') }}" class="btn btn-secondary">
+                Back to Universities
+            </a>
+        </div>
+
+        {% if fields %}
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Course Level</th>
+                        <th>Duration</th>
+                        <th>Intake</th>
+                        <th>Courses Count</th>
+                        <th>MOI Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for field in fields %}
+                    <tr>
+                        <td>
+                            <strong>{{ field.field_name }}</strong>
+                            {% if field.courses %}
+                                <br><small style="color: #666;">
+                                    {{ field.courses }}
+                                </small>
+                            {% endif %}
+                        </td>
+                        <td>{{ field.course_level }}</td>
+                        <td>{{ field.duration }}</td>
+                        <td>{{ field.intake }}</td>
+                        <td>
+                            {% if field.courses %}
+                                <span class="badge">{{ field.courses.split(',')|length }}</span>
+                            {% else %}
+                                <span class="badge" style="background: #6c757d;">0</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if field.moi_required == 'yes' %}
+                                <span style="color: #4CAF50; font-weight: bold;">MOI Enabled</span>
+                            {% else %}
+                                <span style="color: #6c757d;">MOI Disabled</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <a href="{{ url_for('admin_edit_field', id=field.id) }}" class="btn btn-info btn-sm">
+                                    Edit
+                                </a>
+                                <a href="{{ url_for('admin_delete_field', id=field.id) }}" class="btn btn-danger btn-sm" 
+                                   onclick="return confirm('Are you sure you want to delete this field and all its courses?')">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 50px;">
+            <h3 style="color: #666; margin-bottom: 15px;">No Fields Found</h3>
+            <p style="color: #999; margin-bottom: 25px;">
+                This university doesn't have any fields yet. Add fields to start managing courses and requirements.
+            </p>
+            <a href="{{ url_for('admin_add_university_detailed') }}" class="btn btn-primary">
+                Add Fields to University
+            </a>
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <a href="{{ url_for('admin_add_university_detailed') }}" class="btn btn-success">
+                Add New Field
+            </a>
+            <a href="{{ url_for('admin_edit_university', id=university.id) }}" class="btn btn-warning">
+                Edit University Info
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.badge {
+    background: #4CAF50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+</style>
+{% endblock %}

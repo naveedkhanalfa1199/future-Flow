@@ -1,0 +1,1174 @@
+{% extends "base.html" %}
+{% block title %}Generate Advice{% endblock %}
+{% block body %}
+<div class="container">
+<div class="sidebar">
+<h2>Staff Menu</h2>
+<a href="{{ url_for('staff_dashboard') }}">Dashboard</a>
+<a href="{{ url_for('staff_search') }}">Search Universities</a>
+<a href="{{ url_for('staff_generate_advice') }}">Generate Advice</a>
+<a href="{{ url_for('staff_user_manual') }}">User Manual</a>
+<a href="{{ url_for('logout') }}" class="logout">Logout</a>
+</div>
+<div class="content">
+<h2>Generate University Advice</h2>
+
+<!-- Professional Search Form -->
+<div class="card">
+<h3>Location Filters</h3>
+<form method="POST">
+
+<!-- ===================== -->
+<!-- MANUAL DROPDOWNS -->
+<!-- ===================== -->
+
+<!-- Country and Location in one line -->
+<div style="display: flex; gap: 15px; align-items: flex-end;">
+    <!-- Country -->
+    <div class="form-group" style="flex: 1;">
+        <label>Country</label>
+        <select name="country" class="professional-select" onchange="loadHardcodedLocations(this.value)" style="width: 100%;">
+            <option value="">Select Country</option>
+            {% for country in countries %}
+                <option value="{{ country }}">{{ country }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Location -->
+    <div class="form-group" style="flex: 1;">
+        <div style="margin-bottom: 5px;">
+            <label style="display: inline-block;">Location</label>
+            <small style="color: #666; margin-left: 8px;">Select country first</small>
+        </div>
+        <select name="location" id="locationSelect" class="professional-select" style="width: 100%;">
+            <option value="">Select Location</option>
+            <!-- Options will be loaded by JavaScript -->
+        </select>
+    </div>
+</div>
+
+<!-- Study Gap, Percentage, CGPA in one line -->
+<div style="display: flex; gap: 15px; align-items: flex-end;">
+    <!-- Study Gap -->
+    <div class="form-group" style="flex: 1;">
+        <label>Study Gap</label>
+        <select name="study_gap" class="professional-select" style="width: 100%;">
+            <option value="">Select Study Gap</option>
+            {% for gap in study_gaps %}
+                <option value="{{ gap }}">{{ gap }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Percentage -->
+    <div class="form-group" style="flex: 1;">
+        <label>Student Percentage %</label>
+        <select name="percentage" class="professional-select" style="width: 100%;">
+            <option value="">Select Percentage</option>
+            {% for percent in staff_percentages %}
+                <option value="{{ percent }}">{{ percent }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- CGPA -->
+    <div class="form-group" style="flex: 1;">
+        <label>Student CGPA</label>
+        <select name="cgpa" class="professional-select" style="width: 100%;">
+            <option value="">Select CGPA</option>
+            {% for cgpa in staff_cgpa_values %}
+                <option value="{{ cgpa }}">{{ cgpa }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Intake Dropdown -->
+<div class="form-group">
+    <label>Intake</label>
+    <select name="intake" class="professional-select">
+        <option value="">Select Intake</option>
+        {% for intake in intakes %}
+            <option value="{{ intake }}">{{ intake }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- ======================== -->
+
+<!-- OPTIONAL MOI FILTER (TOGGLE) -->
+<div class="form-group" style="margin-top: 20px;">
+<button type="button" class="btn btn-secondary btn-sm" onclick="toggleMOIFilter()" style="margin-bottom: 10px;">
+🔘 Optional Filter for MOI
+</button>
+
+<div id="moiFilterSection" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #ddd; margin-top: 10px;">
+<!-- FSc Marks from hardcoded_dropdowns.html -->
+<div class="form-group">
+<label>FSc English Marks %</label>
+<select name="fsc_marks" class="professional-select">
+    <option value="">Select FSc %</option>
+    {% for percent in staff_percentages %}
+        <option value="{{ percent }}">{{ percent }}</option>
+    {% endfor %}
+</select>
+</div>
+
+<!-- Last University from hardcoded_dropdowns.html -->
+<div class="form-group" style="margin-top: 15px;">
+<label>Last Degree University</label>
+<select name="last_university" class="professional-select">
+<option value="">Select University</option>
+{% for uni in pakistani_universities %}
+<option value="{{ uni }}">{{ uni }}</option>
+{% endfor %}
+</select>
+<small style="color: #666; display: block; margin-top: 5px;">These filters help identify MOI (Medium of Instruction) eligibility</small>
+</div>
+</div>
+</div>
+
+<!-- Course Level, Course Name, Fee Filter in one line (equal widths) -->
+<div style="display: flex; gap: 10px; align-items: flex-start;">
+    <!-- Course Level -->
+    <div class="form-group" style="flex: 0.7;">
+        <label>Course Level</label>
+        <select name="level" id="course_level" class="searchable" style="width: 100%; height: 38px;">
+            <option value="">All Levels</option>
+            {% for l in levels %}
+                <option value="{{ l.value }}">{{ l.value }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Course Name -->
+    <div class="form-group" style="flex: 2;">
+        <label>Course Name *</label>
+        <select name="course" id="course_name" class="professional-select searchable" required style="width: 100%; height: 38px;">
+            <option value="">Select Course</option>
+            {% for course in course_names %}
+                <option value="{{ course.value }}">{{ course.value }}</option>
+            {% endfor %}
+        </select>
+        <small style="color:#666; display: block; margin-top: 5px;">Select your desired course</small>
+    </div>
+    
+    <!-- Fee Filter -->
+    <div class="form-group" style="flex: 0.7;">
+        <label>Maximum Fee (Optional)</label>
+        <input type="number" name="max_fee" placeholder="e.g., 25000" min="0" style="width: 100%; height: 38px;">
+        <small style="color:#666; display: block; margin-top: 5px;">Filter by maximum tuition fee</small>
+    </div>
+</div>
+
+<!-- ====================================== -->
+<!-- ENGLISH TESTS - STAFF SINGLE SELECTION -->
+<!-- ====================================== -->
+<div class="form-group" style="margin-top: 25px;">
+<label>Filter by English Test (Optional)</label>
+<div class="staff-english-container">
+<div class="staff-test-grid">
+
+<!-- IELTS UKVI -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'ielts_ukvi')">
+<div class="test-name">IELTS UKVI</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="ielts_ukvi" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['ielts_ukvi']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- PTE UKVI -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'pte_ukvi')">
+<div class="test-name">PTE UKVI</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="pte_ukvi" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['pte_ukvi']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- Oxford ELLT -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'oxford_ellt')">
+<div class="test-name">Oxford ELLT</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="oxford_ellt" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['oxford_ellt']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- ESOL -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'esol')">
+<div class="test-name">ESOL</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="esol" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['esol']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- TOEFL -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'toefl')">
+<div class="test-name">TOEFL</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="toefl" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['toefl']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- Duolingo -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'duolingo')">
+<div class="test-name">Duolingo</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="duolingo" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['duolingo']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- IELTS Academic -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'ielts_academic')">
+<div class="test-name">IELTS Academic</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="ielts_academic" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['ielts_academic']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- PTE Academic -->
+<div class="staff-test-box" onclick="selectStaffTest(event, this, 'pte_academic')">
+<div class="test-name">PTE Academic</div>
+<div class="test-dropdown" onclick="event.stopPropagation()">
+<input type="hidden" name="english_test_type" value="pte_academic" disabled>
+<select name="english_test_score" class="mini-select">
+<option value="">Select Score</option>
+{% for score in english_tests['pte_academic']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+</div>
+<small style="color:#666; display:block; margin-top:8px;">Click on a test to filter universities by English requirements</small>
+</div>
+</div>
+
+<button type="submit" class="btn btn-primary" style="margin-top: 25px;">
+Generate Advice
+</button>
+</form>
+</div>
+
+<!-- Results section (UNCHANGED) -->
+{% if moi_eligible or moi_potential or regular_results %}
+
+<!-- MOI Eligible Universities -->
+{% if moi_eligible %}
+<div class="card" style="background: #f0fff0; border-left: 5px solid green; margin-top: 30px;">
+    <h3 style="color: green;">MOI Eligible Universities ({{ moi_eligible|length }})</h3>
+    <p style="color: #666;">Student fully qualifies for Medium of Instruction. <strong>No English test required!</strong></p>
+    <div style="margin-top: 20px;">
+        {% for uni in moi_eligible %}
+        <div style="background: white; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ddd; position: relative;">
+            <!-- CHECKBOX ADD KAR DIYA -->
+            <div style="position: absolute; top: 10px; right: 10px;">
+<input type="checkbox" name="selected_universities" value="{{ uni.id }}" 
+       class="uni-checkbox" 
+       data-course="{{ uni.matched_field.matched_course }}"
+       data-initial-deposit="{{ uni.matched_field.initial_deposit or '' }}"
+       data-english-tests="{{ uni.matched_field.english_tests or '' }}"
+       data-scholarship="{{ uni.matched_field.scholarship or '' }}"
+       style="width: 18px; height: 18px; cursor: pointer;">
+</div>
+<h4 style="color:#01411C; margin-bottom: 10px; padding-right: 30px;">{{ uni.university_name }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+<div><strong>Country:</strong> {{ uni.country }}</div>
+<div><strong>Location:</strong> {{ uni.location or 'N/A' }}</div>
+<div><strong>Course:</strong> {{ uni.matched_field.matched_course }}</div>
+<div><strong>Level:</strong> {{ uni.matched_field.course_level }}</div>
+<div><strong>Duration:</strong> {{ uni.matched_field.duration }}</div>
+<div><strong>Intake:</strong> {{ uni.matched_field.intake }}</div>
+<div><strong>Fee:</strong> {{ uni.matched_field.total_fee or 'N/A' }}</div>
+<div><strong>Deposit:</strong> {{ uni.matched_field.initial_deposit or 'N/A' }}</div>
+</div>
+{% if uni.matched_field.scholarship %}
+<div style="margin-top: 10px;"><strong>Scholarship:</strong> {{ uni.matched_field.scholarship }}</div>
+{% endif %}
+</div>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+
+<!-- Regular Universities -->
+{% if regular_results %}
+<div class="card" style="margin-top: 30px;">
+    <h3 style="color:#01411C;">Regular Universities ({{ regular_results|length }})</h3>
+    <p style="color:#666;">English language test required (IELTS/PTE/TOEFL/etc.)</p>
+    <div style="margin-top: 20px;">
+        {% for uni in regular_results %}
+        <div style="background: #f9f9f9; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; position: relative;">
+            <!-- CHECKBOX ADD KAR DIYA -->
+            <div style="position: absolute; top: 10px; right: 10px;">
+<input type="checkbox" name="selected_universities" value="{{ uni.id }}" 
+       class="uni-checkbox" 
+       data-course="{{ uni.matched_field.matched_course }}"
+       data-initial-deposit="{{ uni.matched_field.initial_deposit or '' }}"
+       data-english-tests="{{ uni.matched_field.english_tests or '' }}"
+       data-scholarship="{{ uni.matched_field.scholarship or '' }}"
+       style="width: 18px; height: 18px; cursor: pointer;">
+</div>
+<h4 style="color:#01411C; margin-bottom: 10px; padding-right: 30px;">{{ uni.university_name }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+<div><strong>Country:</strong> {{ uni.country }}</div>
+<div><strong>Location:</strong> {{ uni.location or 'N/A' }}</div>
+<div><strong>Course:</strong> {{ uni.matched_field.matched_course }}</div>
+<div><strong>Level:</strong> {{ uni.matched_field.course_level }}</div>
+<div><strong>Duration:</strong> {{ uni.matched_field.duration }}</div>
+<div><strong>Intake:</strong> {{ uni.matched_field.intake }}</div>
+<div><strong>Fee:</strong> {{ uni.matched_field.total_fee or 'N/A' }}</div>
+<div><strong>Deposit:</strong> {{ uni.matched_field.initial_deposit or 'N/A' }}</div>
+</div>
+{% if uni.matched_field.english_tests %}
+<div style="margin-top: 10px; background: #e3f2fd; padding: 8px; border-radius: 4px;">
+<strong>English Tests Accepted:</strong>
+{% set tests = uni.matched_field.english_tests %}
+{% for test in tests %}
+{{ test.test }}{% if test.score %} ({{ test.score }}){% endif %}{% if not loop.last %}, {% endif %}
+{% endfor %}
+</div>
+{% endif %}
+</div>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+
+<!-- Action Buttons Section -->
+<div style="margin-top: 30px; text-align: center; border-top: 2px solid #eee; padding-top: 20px;">
+    <h3 style="color: #01411C; margin-bottom: 15px;">Actions for Selected Universities</h3>
+    
+    <!-- Selection Controls -->
+    <div style="margin-bottom: 15px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllUniversities()">
+            📋 Select All Universities
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAllUniversities()">
+            ✗ Deselect All
+        </button>
+        <span id="selectedCount" style="margin-left: 15px; color: #666; font-size: 14px;">
+            Selected: 0 universities
+        </span>
+    </div>
+    
+    <!-- Main Action Buttons -->
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+        <button type="button" class="btn btn-info" onclick="showPreview()" style="background: linear-gradient(135deg, #2196F3, #1976d2);">
+            👁️ Show Preview
+        </button>
+        
+        <button type="submit" form="pdfForm" class="btn btn-primary">
+            📥 Download PDF
+        </button>
+        
+        <button type="button" class="btn btn-primary" onclick="showEmailSection()">
+            📧 Send Email
+        </button>
+    </div>
+    
+    <!-- Email Section (Initially Hidden) -->
+    <div id="emailSection" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; display: none;">
+        <h3 style="color: #01411C; margin-bottom: 15px;">Send Advice via Email</h3>
+        <form method="POST" action="{{ url_for('staff_send_email_advice') }}" id="emailForm" onsubmit="return prepareEmailForm()">
+            <!-- Hidden inputs JavaScript se add hongay -->
+<input type="hidden" name="level" id="email_level" value="">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;"> 
+                    Student Email Address:
+                </label>
+                <input type="email"
+                    name="student_email"
+                    id="emailInputField"
+                    placeholder="student@example.com"
+                    required
+                    style="width: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                Send Email Advice
+            </button>
+            <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                Email will be sent from: <strong>naveed@studyadvisers.com</strong>
+            </p>
+        </form>
+    </div>
+</div>
+
+<!-- Download PDF Button (FORM ONLY - DIV REMOVED) -->
+<form method="POST" action="{{ url_for('staff_download_advice_pdf') }}" id="pdfForm" onsubmit="return preparePDFForm()" style="display: none;">
+    <!-- Hidden inputs JavaScript se add hongay -->
+<input type="hidden" name="level" id="pdf_level" value=""> 
+</form>
+
+{% endif %}
+
+</div>
+</div>
+
+<script>
+// ================================
+// UNIVERSITY SELECTION FUNCTIONS
+// ================================
+
+// Select all checkboxes
+function selectAllUniversities() {
+    const checkboxes = document.querySelectorAll('.uni-checkbox');
+    checkboxes.forEach(cb => cb.checked = true);
+    updateSelectedCount();
+}
+
+// Deselect all checkboxes
+function deselectAllUniversities() {
+    const checkboxes = document.querySelectorAll('.uni-checkbox');
+    checkboxes.forEach(cb => cb.checked = false);
+    updateSelectedCount();
+}
+
+// Update selected count display
+function updateSelectedCount() {
+    const checkboxes = document.querySelectorAll('.uni-checkbox');
+    const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+    document.getElementById('selectedCount').textContent = `Selected: ${checked} universities`;
+}
+
+// Listen to checkbox changes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.uni-checkbox');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectedCount);
+    });
+    updateSelectedCount(); // Initial count
+});
+
+// Show/Hide Email Section
+function showEmailSection() {
+    const selectedCheckboxes = document.querySelectorAll('.uni-checkbox:checked');
+    
+    if (selectedCheckboxes.length === 0) {
+        alert('Please select at least one university to send email.');
+        return;
+    }
+    
+    document.getElementById('emailSection').style.display = 'block';
+    document.getElementById('emailInputField').focus();
+}
+
+// Course Level -> Course Name Cascade
+document.getElementById('course_level').addEventListener('change', function() {
+const level = this.value;
+const courseSelect = document.getElementById('course_name');
+courseSelect.innerHTML = '<option value="">Select Course</option>';
+if (level) {
+fetch('/api/courses/' + level)
+.then(response => response.json())
+.then(data => {
+data.forEach(item => {
+const option = document.createElement('option');
+option.value = item.value;
+option.textContent = item.value;
+courseSelect.appendChild(option);
+});
+});
+}
+});
+
+// Simple initialization
+document.addEventListener('DOMContentLoaded', function() {
+const currentLevel = document.getElementById('course_level').value;
+if (currentLevel) {
+document.getElementById('course_level').dispatchEvent(new Event('change'));
+}
+});
+
+// ========================================
+// OPTIONAL MOI FILTER TOGGLE
+// ========================================
+function toggleMOIFilter() {
+const moiSection = document.getElementById('moiFilterSection');
+const button = document.querySelector('button[onclick="toggleMOIFilter()"]');
+    
+if (moiSection.style.display === 'none' || !moiSection.style.display) {
+moiSection.style.display = 'block';
+button.innerHTML = '🔘 Optional Filter for MOI (Active)';
+button.style.backgroundColor = '#4CAF50';
+button.style.color = 'white';
+} else {
+moiSection.style.display = 'none';
+button.innerHTML = '🔘 Optional Filter for MOI';
+button.style.backgroundColor = '';
+button.style.color = '';
+}
+}
+
+// ========================================
+// STAFF ENGLISH TEST - SINGLE SELECTION WITH WARNING
+// ========================================
+let selectedTest = null;
+let errorDiv = null;
+
+function selectStaffTest(event, element, testKey) {
+// Prevent event bubbling
+event.stopPropagation();
+
+// If clicking already selected test, deselect it
+if (selectedTest === element) {
+element.classList.remove('selected');
+const dropdown = element.querySelector('.test-dropdown');
+dropdown.classList.remove('show');
+        
+const hiddenInput = dropdown.querySelector('input[name="english_test_type"]');
+hiddenInput.disabled = true;
+        
+const scoreSelect = dropdown.querySelector('select[name="english_test_score"]');
+if (scoreSelect) scoreSelect.value = '';
+        
+selectedTest = null;
+// Hide error if exists
+if (errorDiv) errorDiv.style.display = 'none';
+return;
+}
+    
+// If another test is already selected, show warning
+if (selectedTest && selectedTest !== element) {
+// Create or show error message
+if (!errorDiv) {
+errorDiv = document.createElement('div');
+errorDiv.id = 'englishTestError';
+errorDiv.style.cssText = 'color:red; font-size:12px; margin-top:5px; padding:5px; background:#ffe6e6; border-left:3px solid red;';
+element.closest('.staff-english-container').appendChild(errorDiv);
+}
+    
+errorDiv.innerHTML = '⚠️ You are allowed to select only ONE English Test.<br>To select another test, please deselect the previous one first by clicking on it again.';
+errorDiv.style.display = 'block';
+return;
+}
+    
+// Select new test
+element.classList.add('selected');
+const dropdown = element.querySelector('.test-dropdown');
+dropdown.classList.add('show');
+    
+const hiddenInput = dropdown.querySelector('input[name="english_test_type"]');
+hiddenInput.disabled = false;
+    
+selectedTest = element;
+// Hide error if exists
+if (errorDiv) errorDiv.style.display = 'none';
+}
+</script>
+
+<style>
+/* ========================================= */
+/* STAFF ENGLISH TEST - CLEAN COMPACT DESIGN */
+/* ========================================= */
+.staff-english-container {
+background: #fafafa;
+border: 1px solid #ddd;
+border-radius: 6px;
+padding: 12px;
+}
+
+.staff-test-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 4px;
+}
+
+.staff-test-box {
+background: white;
+border: 2px solid #e0e0e0;
+border-radius: 4px;
+padding: 6px;
+cursor: pointer;
+transition: all 0.2s ease;
+text-align: center;
+position: relative;
+}
+
+.staff-test-box:hover {
+border-color: #999;
+background: #f5f5f5;
+}
+
+.staff-test-box.selected {
+border-color: #4CAF50;
+background: #e8f5e9;
+}
+
+.test-name {
+font-size: 11px;
+font-weight: 500;
+color: #333;
+margin-bottom: 6px;
+}
+
+.test-dropdown {
+display: none;
+margin-top: 6px;
+}
+
+.test-dropdown.show {
+display: block !important;
+}
+
+.mini-select {
+width: 100%;
+padding: 4px;
+font-size: 11px;
+border: 1px solid #ccc;
+border-radius: 3px;
+background: white;
+}
+
+/* Responsive - 3 columns on tablets */
+@media (max-width: 992px) {
+.staff-test-grid {
+grid-template-columns: repeat(3, 1fr);
+}
+}
+
+/* Responsive - 2 columns on mobile */
+@media (max-width: 768px) {
+.staff-test-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+}
+
+/* MOI Filter Button */
+.btn-secondary {
+background: #6c757d;
+color: white;
+border: none;
+padding: 6px 12px;
+border-radius: 3px;
+cursor: pointer;
+font-size: 12px;
+}
+</style>
+
+<script>
+// Pass country_locations to JavaScript
+const hardcodedCountryLocations = {{ country_locations|tojson|safe }};
+
+function loadHardcodedLocations(country) {
+    const select = document.getElementById('locationSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Select Location</option>';
+    
+    if (country && hardcodedCountryLocations[country]) {
+        const locations = hardcodedCountryLocations[country];
+        locations.forEach(location => {
+            const option = document.createElement('option');
+            option.value = location;
+            option.textContent = location;
+            select.appendChild(option);
+        });
+        select.disabled = false;
+    } else {
+        const option = document.createElement('option');
+        option.value = "";
+        option.textContent = "No locations found for this country";
+        select.appendChild(option);
+        select.disabled = true;
+    }
+}
+</script>
+
+<!-- PREVIEW MODAL -->
+<div id="previewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto;">
+    <div style="background: white; width: 90%; max-width: 800px; margin: 50px auto; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); position: relative;">
+        
+        <!-- Modal Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #01411C; padding-bottom: 10px;">
+            <h2 style="color: #01411C; margin: 0;">University Preview</h2>
+            <button onclick="closePreview()" style="background: #f44336; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                ✕ Close
+            </button>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+            <button onclick="copyToClipboardText()" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;">
+                Copy to Clipboard
+            </button>
+            <span id="copyStatus" style="color: #666; font-size: 14px; margin-left: 10px; align-self: center;"></span>
+        </div>
+        
+        <!-- Preview Content -->
+        <div id="previewContent" style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #f9f9f9;">
+            <!-- Preview universities will be inserted here by JavaScript -->
+            <p style="color: #999; text-align: center;">Select universities and click "Show Preview"</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// ================================
+// PREVIEW MODAL COMPLETE FUNCTIONS
+// ================================
+
+function showPreview() {
+    const selectedCheckboxes = document.querySelectorAll('.uni-checkbox:checked');
+    
+    if (selectedCheckboxes.length === 0) {
+        alert('Please select at least one university to preview.');
+        return;
+    }
+    
+    // Clear previous content
+    const previewContent = document.getElementById('previewContent');
+    previewContent.innerHTML = '';
+    
+    // Group universities by category (MOI Potential REMOVED)
+    const moiEligible = [];
+    const regular = [];
+    
+    // Collect university data from DOM
+    selectedCheckboxes.forEach(cb => {
+        const uniCard = cb.closest('div[style*="background:"]');
+        const uniName = uniCard.querySelector('h4').textContent;
+        const details = uniCard.innerHTML;
+        
+        // Determine category by checking parent card
+        const categoryCard = uniCard.closest('.card');
+        const categoryTitle = categoryCard.querySelector('h3').textContent;
+        
+        const uniData = {
+            id: cb.value,
+            name: uniName,
+            details: details,
+            category: categoryTitle.includes('MOI Eligible') ? 'eligible' : 'regular'
+        };
+        
+        if (uniData.category === 'eligible') moiEligible.push(uniData);
+        else regular.push(uniData);
+    });
+    
+    // Display universities in preview
+    if (moiEligible.length > 0) {
+        displayUniversitiesInPreview(moiEligible, 'MOI Eligible Universities');
+    }
+    if (regular.length > 0) {
+        displayUniversitiesInPreview(regular, 'Regular Universities');
+    }
+    
+    // Show modal
+    document.getElementById('previewModal').style.display = 'block';
+}
+
+function displayUniversitiesInPreview(universities, title) {
+    if (universities.length === 0) return;
+    
+    const previewContent = document.getElementById('previewContent');
+    
+    // Add category header
+    const header = document.createElement('div');
+    header.innerHTML = `<h3 style="color: #01411C; margin: 20px 0 10px 0;">${title} (${universities.length})</h3>`;
+    previewContent.appendChild(header);
+    
+    // Add universities (INITIAL DEPOSIT and ENGLISH TESTS REMOVED)
+    universities.forEach((uni, index) => {
+        const uniDiv = document.createElement('div');
+        uniDiv.style.cssText = 'background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #ddd;';
+        
+        // Extract only needed information from details
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = uni.details;
+        
+        // Get university name
+        const uniName = tempDiv.querySelector('h4').textContent;
+        
+        // Get grid data
+        let country = "N/A";
+        let location = "N/A";
+        let course = "N/A";
+        let level = "N/A";
+        let duration = "N/A";
+        let intake = "N/A";
+        let fee = "N/A";
+        
+        const gridDivs = tempDiv.querySelectorAll('div[style*="display: grid"]');
+        if (gridDivs.length > 0) {
+            const gridDiv = gridDivs[0];
+            const divs = gridDiv.querySelectorAll('div');
+            divs.forEach(div => {
+                const text = div.textContent;
+                if (text.includes('Country:')) country = text.replace('Country:', '').trim();
+                if (text.includes('Location:')) location = text.replace('Location:', '').trim();
+                if (text.includes('Course:')) course = text.replace('Course:', '').trim();
+                if (text.includes('Level:')) level = text.replace('Level:', '').trim();
+                if (text.includes('Duration:')) duration = text.replace('Duration:', '').trim();
+                if (text.includes('Intake:')) intake = text.replace('Intake:', '').trim();
+                if (text.includes('Fee:')) fee = text.replace('Fee:', '').trim();
+                // INITIAL DEPOSIT and ENGLISH TESTS intentionally skipped
+            });
+        }
+        
+        // Create clean preview without Initial Deposit and English Tests
+        const cleanHTML = `
+            <h4 style="color: #01411C; margin-bottom: 10px;">${uniName}</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <div><strong>Country:</strong> ${country}</div>
+                <div><strong>Location:</strong> ${location}</div>
+                <div><strong>Course:</strong> ${course}</div>
+                <div><strong>Level:</strong> ${level}</div>
+                <div><strong>Duration:</strong> ${duration}</div>
+                <div><strong>Intake:</strong> ${intake}</div>
+                <div><strong>Fee:</strong> ${fee}</div>
+            </div>
+        `;
+        
+        uniDiv.innerHTML = cleanHTML;
+        previewContent.appendChild(uniDiv);
+    });
+}
+
+function closePreview() {
+    document.getElementById('previewModal').style.display = 'none';
+}
+
+function copyToClipboardText() {
+    const selectedCheckboxes = document.querySelectorAll('.uni-checkbox:checked');
+    
+    if (selectedCheckboxes.length === 0) {
+        alert('Please select universities first.');
+        return;
+    }
+    
+    let clipboardText = "";
+    
+    // Add header (advice ka header hai)
+    clipboardText += "*===UNIVERSITY ADVICE REPORT===*\n\n";
+    clipboardText += "Dear Student:\n";
+    clipboardText += "We have provided the following options based on the profile, you have shared with us. Please share if you have additional information that may "+
+                     "affect this advice. Please note, these options are not a comprehensive list of options. We are able to provide you with additional options "+
+                     "based on your updated requirements.\n\n";
+    clipboardText += "Note:\n";
+    clipboardText += "We advise the student to appear in an English Language Test preferably IELTS or any other course accepted by the country because there are "+
+                     "only a few options with University Internal Test. If you want to apply without English Language test and want to book the university "+
+                     "internal test, please tell us.\n\n";
+    clipboardText += "*Our Advice*:\n\n";
+    clipboardText += "===============================\n";
+    
+    // Group universities by category
+    const categories = {
+        'eligible': { title: "MOI ELIGIBLE UNIVERSITIES", count: 0, items: [] },
+        'regular': { title: "REGULAR UNIVERSITIES", count: 0, items: [] }
+    };
+    
+    // Collect data from DOM
+    selectedCheckboxes.forEach(cb => {
+        const uniCard = cb.closest('div[style*="background:"]');
+        const uniName = uniCard.querySelector('h4').textContent.trim();
+        
+        // Extract details FROM CHECKBOX DATA ATTRIBUTES
+        let country = "N/A";
+        let location = "N/A";
+        let course = "N/A";
+        let level = "N/A";
+        let fee = "N/A";
+        let duration = "N/A";
+        let intake = "N/A";
+        
+        // ✅ GET ACTUAL COURSE FROM DATA ATTRIBUTE
+        const actualCourse = cb.dataset.course;
+        if (actualCourse && actualCourse.trim() !== '') {
+            course = actualCourse;
+        }
+        
+        // ✅ GET INITIAL DEPOSIT FROM DATA ATTRIBUTE
+        const initialDeposit = cb.dataset.initialDeposit || "N/A";
+        
+        // ✅ GET ENGLISH TESTS FROM DATA ATTRIBUTE
+        const englishTests = cb.dataset.englishTests || "";
+        
+       // ✅ GET SCHOLARSHIP FROM DATA ATTRIBUTE
+       const scholarship = cb.dataset.scholarship || "";
+
+        // Try to find other details from the grid
+        const gridDivs = uniCard.querySelectorAll('div[style*="display: grid"]');
+        if (gridDivs.length > 0) {
+            const gridDiv = gridDivs[0];
+            const divs = gridDiv.querySelectorAll('div');
+            divs.forEach(div => {
+                const text = div.textContent;
+                if (text.includes('Country:')) country = text.replace('Country:', '').trim();
+                if (text.includes('Location:')) location = text.replace('Location:', '').trim();
+                if (text.includes('Course:') && course === "N/A") course = text.replace('Course:', '').trim();
+                if (text.includes('Level:')) level = text.replace('Level:', '').trim();
+                if (text.includes('Fee:')) fee = text.replace('Fee:', '').trim();
+                if (text.includes('Duration:')) duration = text.replace('Duration:', '').trim();
+                if (text.includes('Intake:')) intake = text.replace('Intake:', '').trim();
+            });
+        }
+        
+        // Determine category
+        let category = 'regular';
+        const categoryCard = uniCard.closest('.card');
+        if (categoryCard) {
+            const categoryTitle = categoryCard.querySelector('h3').textContent;
+            if (categoryTitle.includes('MOI Eligible')) category = 'eligible';
+        }
+        
+        // Format university entry (WITH INITIAL DEPOSIT AND ENGLISH TESTS)
+        let uniEntry = `${uniName}\n` +
+                       `Country: ${country}\n` +
+                       `Location: ${location}\n` +
+                       `Course: ${course} (${level})\n` +
+                       `Duration: ${duration} | Intake: ${intake}\n` +
+                       `Fee: ${fee}\n`;
+        
+        // ✅ ADD: Initial Deposit if available
+        if (initialDeposit && initialDeposit !== 'N/A' && initialDeposit.trim() !== '') {
+            uniEntry += `Initial Deposit: ${initialDeposit}\n`;
+        }
+        
+        // ✅ ADD: English Tests if available
+        if (englishTests && englishTests.trim() !== '') {
+            try {
+                // Try to parse as JSON
+                const tests = JSON.parse(englishTests);
+                if (tests.length > 0) {
+                    const testList = tests.map(test => {
+                        return test.score ? `${test.test} (min ${test.score})` : test.test;
+                    }).join(', ');
+                    uniEntry += `English Tests: ${testList}\n`;
+                }
+            } catch (e) {
+                // If not JSON, use as string
+                uniEntry += `English Tests: ${englishTests}\n`;
+            }
+        }
+        
+       // ✅ ADD: Scholarship if available
+       if (scholarship && scholarship.trim() !== '' && scholarship !== 'N/A') {
+       uniEntry += `Scholarship: ${scholarship}\n`;
+       }
+
+        categories[category].items.push(uniEntry);
+        categories[category].count++;
+    });
+    
+    // Build clipboard text
+    for (const [key, category] of Object.entries(categories)) {
+        if (category.count > 0) {
+            clipboardText += `\n${category.title} (${category.count})\n`;
+            clipboardText += "----------------------------------------\n";
+            clipboardText += category.items.join('\n');
+            clipboardText += '\n';
+        }
+    }
+    
+    // Add footer
+    clipboardText += "\n=/=/=/=/=/=/=/=/=/=/=/=/=\n";
+    clipboardText += "Please reply to this message/email if you wish to proceed with our advice or contact the dedicated admission officer to proceed "+
+                     "with your application.\n";
+    clipboardText += "SAUK ISLAMABAD is the best choice for you because we are providing free English Test preparation classes, providing free vouchers and all the process without any cost to you.\n";
+    clipboardText += "*Study Advisers Islamabad*\n";
+    
+    // Copy to clipboard
+    copyTextToClipboard(clipboardText);
+}
+
+// Clipboard helper function
+function copyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        const statusEl = document.getElementById('copyStatus');
+        if (successful) {
+            statusEl.textContent = 'Copied to clipboard! Ready to paste.';
+            statusEl.style.color = 'green';
+            
+            // Reset status after 3 seconds
+            setTimeout(() => {
+                statusEl.textContent = '';
+            }, 3000);
+        } else {
+            statusEl.textContent = 'Failed to copy. Please try again.';
+            statusEl.style.color = 'red';
+        }
+    } catch (err) {
+        alert('Copy failed. Error: ' + err);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Close modal when clicking outside
+document.getElementById('previewModal').addEventListener('click', function(e) {
+    if (e.target.id === 'previewModal') {
+        closePreview();
+    }
+});
+
+// ================================
+// FORM PREPARATION FUNCTIONS
+// ================================
+
+// Function for PDF form (OLD design preserved in app.py)
+function preparePDFForm() {
+    const selectedCheckboxes = document.querySelectorAll('.uni-checkbox:checked');
+    
+    if (selectedCheckboxes.length === 0) {
+        alert('Please select at least one university to download PDF.');
+        return false;
+    }
+    
+    // ✅ ADDED: Level value set karo
+    var levelValue = document.querySelector('select[name="level"]').value;
+    document.getElementById('pdf_level').value = levelValue;
+    
+    const form = document.getElementById('pdfForm');
+    
+    // Clear any existing hidden inputs
+    const existingHidden = form.querySelectorAll('input[type="hidden"]');
+    existingHidden.forEach(el => el.remove());
+    
+    // Add selected universities as hidden inputs
+    selectedCheckboxes.forEach(cb => {
+        const uniId = cb.value;
+        const course = cb.dataset.course;
+        
+        // Add university ID
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'selected_universities';
+        idInput.value = uniId;
+        form.appendChild(idInput);
+        
+        // Add course name
+        const courseInput = document.createElement('input');
+        courseInput.type = 'hidden';
+        courseInput.name = `course_${uniId}`;
+        courseInput.value = course;
+        form.appendChild(courseInput);
+    });
+    
+    // Also add student profile data from the search form
+    addStudentProfileData(form);
+    
+    return true; // Allow form submission
+}
+
+// Function for Email form  
+function prepareEmailForm() {
+    const selectedCheckboxes = document.querySelectorAll('.uni-checkbox:checked');
+    
+    if (selectedCheckboxes.length === 0) {
+        alert('Please select at least one university to send email.');
+        return false;
+    }
+    
+    // ✅ ADDED: Level value set karo
+    var levelValue = document.querySelector('select[name="level"]').value;
+    document.getElementById('email_level').value = levelValue;
+    
+    const form = document.getElementById('emailForm');
+    
+    // Clear any existing hidden inputs (except email field)
+    const existingHidden = form.querySelectorAll('input[type="hidden"]');
+    existingHidden.forEach(el => {
+        if (el.name !== 'student_email') el.remove();
+    });
+    
+    // Add selected universities as hidden inputs
+    selectedCheckboxes.forEach(cb => {
+        const uniId = cb.value;
+        const course = cb.dataset.course;
+        
+        // Add university ID
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'selected_universities';
+        idInput.value = uniId;
+        form.appendChild(idInput);
+        
+        // Add course name
+        const courseInput = document.createElement('input');
+        courseInput.type = 'hidden';
+        courseInput.name = `course_${uniId}`;
+        courseInput.value = course;
+        form.appendChild(courseInput);
+    });
+    
+    // Also add student profile data from the search form
+    addStudentProfileData(form);
+    
+    return true; // Allow form submission
+}
+
+// Helper function to add student profile data
+function addStudentProfileData(form) {
+    // Find the main search form
+    const searchForm = document.querySelector('form[method="POST"]:not(#pdfForm):not(#emailForm)');
+    if (!searchForm) return;
+    
+    // List of profile fields to copy
+    const profileFields = ['fsc_marks', 'cgpa', 'percentage', 'last_university', 'study_gap'];
+    
+    profileFields.forEach(fieldName => {
+        const field = searchForm.querySelector(`[name="${fieldName}"]`);
+        if (field && field.value) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = `student_${fieldName}`;
+            hiddenInput.value = field.value;
+            form.appendChild(hiddenInput);
+        }
+    });
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+{% block title %}Search Universities{% endblock %}
+{% block body %}
+<div class="container">
+<div class="sidebar">
+<h2>Staff Menu</h2>
+<a href="{{ url_for('staff_dashboard') }}">Dashboard</a>
+<a href="{{ url_for('staff_search') }}">Search Universities</a>
+<a href="{{ url_for('staff_generate_advice') }}">Generate Advice</a>
+<a href="{{ url_for('staff_user_manual') }}">User Manual</a>
+<a href="{{ url_for('logout') }}" class="logout">Logout</a>
+</div>
+
+<div class="content">
+<h2>Search Universities</h2>
+
+<!-- Search Form -->
+<div class="card">
+<h3>Search Filters</h3>
+<form method="POST">
+
+<!-- ===================== -->
+<!-- MANUAL DROPDOWNS (REPLACEMENT FOR hardcoded_dropdowns.html) -->
+<!-- ===================== -->
+
+<!-- Country Dropdown -->
+<div class="form-group">
+    <label>Country</label>
+    <select name="country" class="professional-select" onchange="loadHardcodedLocations(this.value)">
+        <option value="">Select Country</option>
+        {% for country in countries %}
+            <option value="{{ country }}">{{ country }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Location Dropdown (Single Select for Staff) -->
+<div class="form-group">
+    <label>Location</label>
+    <select name="location" id="locationSelect" class="professional-select">
+        <option value="">Select Location</option>
+        <!-- Options will be loaded by JavaScript -->
+    </select>
+</div>
+
+<!-- Study Gap, Percentage, CGPA, Intake in one line -->
+<div style="display: flex; gap: 10px; align-items: flex-end;">
+    <!-- Study Gap -->
+    <div class="form-group" style="flex: 1;">
+        <label>Study Gap</label>
+        <select name="study_gap" class="professional-select" style="width: 100%;">
+            <option value="">Select Study Gap</option>
+            {% for gap in study_gaps %}
+                <option value="{{ gap }}">{{ gap }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Percentage -->
+    <div class="form-group" style="flex: 1;">
+        <label>Student Percentage %</label>
+        <select name="percentage" class="professional-select" style="width: 100%;">
+            <option value="">Select Percentage</option>
+            {% for percent in staff_percentages %}
+                <option value="{{ percent }}">{{ percent }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- CGPA -->
+    <div class="form-group" style="flex: 1;">
+        <label>Student CGPA</label>
+        <select name="cgpa" class="professional-select" style="width: 100%;">
+            <option value="">Select CGPA</option>
+            {% for cgpa in staff_cgpa_values %}
+                <option value="{{ cgpa }}">{{ cgpa }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- Intake -->
+    <div class="form-group" style="flex: 1;">
+        <label>Intake</label>
+        <select name="intake" class="professional-select" style="width: 100%;">
+            <option value="">Select Intake</option>
+            {% for intake in intakes %}
+                <option value="{{ intake }}">{{ intake }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Course Level (Database Driven) -->
+<div class="form-group">
+<label>Course Level</label>
+<select name="level" id="course_level" class="searchable">
+<option value="">All Levels</option>
+{% for l in levels %}
+<option value="{{ l.value }}">{{ l.value }}</option>
+{% endfor %}
+</select>
+</div>
+
+<!-- Course Name (Database Driven) -->
+<div class="form-group" style="margin-top: 15px;">
+<label>Course Name *</label>
+<select name="course" id="course_name" class="professional-select searchable" required>
+<option value="">Select Course</option>
+{% for course in course_names %}
+<option value="{{ course.value }}">{{ course.value }}</option>
+{% endfor %}
+</select>
+<small style="color:#666;">Select your desired course from the list</small>
+</div>
+
+<!-- =============================== -->
+<!-- ENGLISH TESTS - SINGLE SELECTION -->
+<!-- =============================== -->
+<div class="form-group">
+<label>English Test Filter (Optional)</label>
+<div class="english-test-container">
+<div class="english-test-grid">
+<!-- IELTS UKVI -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'ielts_ukvi')">
+<div class="test-box">IELTS UKVI</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="ielts_ukvi" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+{% for score in english_tests['ielts_ukvi']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- PTE UKVI -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'pte_ukvi')">
+<div class="test-box">PTE UKVI</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="pte_ukvi" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+<option value="">Select Score</option>
+{% for score in english_tests['pte_ukvi']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- Oxford ELLT -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'oxford_ellt')">
+<div class="test-box">Oxford ELLT</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="oxford_ellt" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+{% for score in english_tests['oxford_ellt']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- ESOL -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'esol')">
+<div class="test-box">ESOL</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="esol" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+<option value="">Select Score</option>
+{% for score in english_tests['esol']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- TOEFL -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'toefl')">
+<div class="test-box">TOEFL</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="toefl" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+<option value="">Select Score</option>
+{% for score in english_tests['toefl']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- Duolingo -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'duolingo')">
+<div class="test-box">Duolingo</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="duolingo" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+<option value="">Select Score</option>
+{% for score in english_tests['duolingo']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- IELTS Academic -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'ielts_academic')">
+<div class="test-box">IELTS Academic</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="ielts_academic" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+{% for score in english_tests['ielts_academic']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+
+<!-- PTE Academic -->
+<div class="english-test-item" onclick="selectEnglishTest(this, 'pte_academic')">
+<div class="test-box">PTE Academic</div>
+<div class="test-dropdown">
+<input type="hidden" name="english_test_type" value="pte_academic" disabled>
+<select name="english_test_score" class="mini-select" onclick="event.stopPropagation()">
+<option value="">Select Score</option>
+{% for score in english_tests['pte_academic']['scores'] %}
+<option value="{{ score }}">{{ score }}</option>
+{% endfor %}
+</select>
+</div>
+</div>
+</div>
+
+<!-- Error Message Container -->
+<div id="englishTestError" class="error-message" style="display: none;"></div>
+
+<small class="help-text">Click on a test to select. Only one test can be selected at a time.</small>
+</div>
+</div>
+
+<!-- Additional Filters -->
+<div class="form-grid">
+<div class="form-group">
+<label>Maximum Fee</label>
+<input type="number" name="max_fee" placeholder="e.g., 25000" min="0">
+</div>
+<div class="form-group">
+<label>Initial Deposit</label>
+<input type="text" name="initial_deposit" placeholder="e.g., £2000">
+</div>
+</div>
+
+<button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+Search Universities
+</button>
+</form>
+</div>
+
+<!-- Search Results -->
+{% if results %}
+<div class="card" style="margin-top: 30px;">
+<h3>Search Results ({{ results|length }} universities found)</h3>
+<table>
+<thead>
+<tr>
+<th>University</th>
+<th>Country</th>
+<th>Location</th>
+<th>Fields</th>
+<th>Level</th>
+<th>Fee</th>
+<th>Deposit</th>
+</tr>
+</thead>
+<tbody>
+{% for uni in results %}
+<tr>
+<td>
+<strong>{{ uni.university_name }}</strong>
+{% if uni.fields %}
+<br><small>
+{% for field in uni.fields[:3] %}
+    {{ field.matched_course or field.field_name }}{% if not loop.last %}, {% endif %}
+{% endfor %}
+</small>
+{% endif %}
+</td>
+<td>{{ uni.country }}</td>
+<td>
+{% if uni.location %}
+{{ uni.location }}
+{% else %}
+-
+{% endif %}
+</td>
+<td>
+{% if uni.fields %}
+{{ uni.fields|length }} fields
+{% else %}
+0
+{% endif %}
+</td>
+<td>
+{% if uni.fields %}
+{% set levels = uni.fields|map(attribute='course_level')|unique|list %}
+{{ levels|join(', ') }}
+{% else %}
+-
+{% endif %}
+</td>
+<td>
+{% if uni.fields and uni.fields[0].total_fee %}
+{{ uni.fields[0].total_fee }}
+{% else %}
+-
+{% endif %}
+</td>
+<td>
+{% if uni.fields and uni.fields[0].initial_deposit %}
+{{ uni.fields[0].initial_deposit }}
+{% else %}
+-
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% elif request.method == 'POST' %}
+<div class="card" style="margin-top: 30px; text-align: center; padding: 30px;">
+<h3>No Universities Found</h3>
+<p>No universities match your search criteria. Try adjusting your filters.</p>
+<p style="color: #999; margin-top: 10px;">
+For more advanced search with MOI eligibility checking, use the "Generate Advice" feature.
+</p>
+</div>
+{% endif %}
+</div>
+</div>
+
+<script>
+// Course Level -> Course Name Cascade (EXACT SAME AS staff_generate_advice.html)
+document.getElementById('course_level').addEventListener('change', function() {
+    const level = this.value;
+    const courseSelect = document.getElementById('course_name');
+    courseSelect.innerHTML = '<option value="">All Courses</option>';
+    
+    if (level) {
+        fetch('/api/courses/' + level)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.value;
+                option.textContent = item.value;
+                courseSelect.appendChild(option);
+            });
+        });
+    }
+});
+
+// Simple initialization (EXACT SAME)
+document.addEventListener('DOMContentLoaded', function() {
+    const currentLevel = document.getElementById('course_level').value;
+    if (currentLevel) {
+        document.getElementById('course_level').dispatchEvent(new Event('change'));
+    }
+});
+
+// ================================
+// ENGLISH TEST - SINGLE SELECTION
+// ================================
+let selectedEnglishTest = null;
+
+function selectEnglishTest(element, testType) {
+// If already selected this test, deselect it
+if (selectedEnglishTest === element) {
+deselectEnglishTest(element);
+return;
+}
+    
+// If another test is already selected, show error
+if (selectedEnglishTest && selectedEnglishTest !== element) {
+showEnglishTestError("You have already selected one English test. To select another, please deselect the previous one.");
+return;
+}
+    
+// Select this test
+element.classList.add('selected');
+const dropdown = element.querySelector('.test-dropdown');
+dropdown.style.display = 'block';
+    
+const hiddenInput = dropdown.querySelector('input[name="english_test_type"]');
+hiddenInput.disabled = false;
+    
+selectedEnglishTest = element;
+hideEnglishTestError();
+}
+
+function deselectEnglishTest(element) {
+element.classList.remove('selected');
+const dropdown = element.querySelector('.test-dropdown');
+dropdown.style.display = 'none';
+    
+const hiddenInput = dropdown.querySelector('input[name="english_test_type"]');
+hiddenInput.disabled = true;
+    
+const scoreSelect = dropdown.querySelector('select[name="english_test_score"]');
+if (scoreSelect) scoreSelect.value = '';
+    
+selectedEnglishTest = null;
+hideEnglishTestError();
+}
+
+function showEnglishTestError(message) {
+const errorDiv = document.getElementById('englishTestError');
+errorDiv.textContent = message;
+errorDiv.style.display = 'block';
+errorDiv.style.color = 'red';
+errorDiv.style.marginTop = '8px';
+errorDiv.style.fontSize = '12px';
+errorDiv.style.borderLeft = '3px solid red';
+errorDiv.style.paddingLeft = '8px';
+}
+
+function hideEnglishTestError() {
+document.getElementById('englishTestError').style.display = 'none';
+}
+
+// Pass country_locations to JavaScript
+const hardcodedCountryLocations = {{ country_locations|tojson|safe }};
+
+// Location loading function
+function loadHardcodedLocations(country) {
+    const select = document.getElementById('locationSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Select Location</option>';
+    
+    if (country && hardcodedCountryLocations[country]) {
+        const locations = hardcodedCountryLocations[country];
+        locations.forEach(location => {
+            const option = document.createElement('option');
+            option.value = location;
+            option.textContent = location;
+            select.appendChild(option);
+        });
+        select.disabled = false;
+    } else {
+        const option = document.createElement('option');
+        option.value = "";
+        option.textContent = "No locations found for this country";
+        select.appendChild(option);
+        select.disabled = true;
+    }
+}
+</script>
+
+<style>
+/* Form Layout */
+.form-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 15px;
+margin: 15px 0;
+}
+
+.form-group {
+margin-bottom: 15px;
+}
+
+.form-group label {
+display: block;
+margin-bottom: 5px;
+font-weight: 500;
+font-size: 13px;
+color: #333;
+}
+
+.professional-select, .professional-input {
+width: 100%;
+padding: 8px 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
+font-size: 13px;
+background: white;
+}
+
+/* English Test Styles */
+.english-test-container {
+background: #fafafa;
+border: 1px solid #ddd;
+border-radius: 4px;
+padding: 10px;
+margin: 15px 0;
+}
+
+.english-test-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 6px;
+}
+
+.english-test-item {
+cursor: pointer;
+}
+
+.test-box {
+background: white;
+border: 1px solid #ddd;
+border-radius: 3px;
+padding: 6px 8px;
+font-size: 11px;
+text-align: center;
+transition: all 0.2s ease;
+}
+
+.english-test-item:hover .test-box {
+border-color: #999;
+background: #f5f5f5;
+}
+
+.english-test-item.selected .test-box {
+background: #e8f5e9;
+border-color: #4CAF50;
+color: #333;
+}
+
+.test-dropdown {
+display: none;
+margin-top: 6px;
+}
+
+.mini-select {
+width: 100%;
+padding: 4px 6px;
+font-size: 11px;
+border: 1px solid #ccc;
+border-radius: 3px;
+background: white;
+}
+
+.help-text {
+display: block;
+margin-top: 8px;
+color: #666;
+font-size: 11px;
+}
+
+/* Table Styles */
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 12px;
+}
+
+table th, table td {
+padding: 8px 10px;
+text-align: left;
+border-bottom: 1px solid #eee;
+}
+
+table th {
+background: #f8f9fa;
+font-weight: 600;
+color: #333;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+.english-test-grid {
+grid-template-columns: repeat(3, 1fr);
+}
+}
+
+@media (max-width: 768px) {
+.english-test-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+.form-grid {
+grid-template-columns: 1fr;
+}
+}
+</style>
+
+{% endblock %}

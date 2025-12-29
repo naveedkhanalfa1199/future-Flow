@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAUK - Staff Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .verification-container {
+            background: white;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .logo span:nth-child(1) { color: #ff5252; }
+        .logo span:nth-child(2) { color: #ff5252; }
+        .logo span:nth-child(3) { color: #000000; }
+        .logo span:nth-child(4) { color: #ff5252; }
+
+        .subtitle {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffeb3b;
+            margin-top: 5px;
+        }
+
+        .notice-box {
+            background: white;
+            color: #1e3c72;
+            padding: 20px;
+            margin: 0;
+            border-left: 5px solid #ffeb3b;
+        }
+
+        .notice-box p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: normal;
+        }
+
+        .form-content {
+            padding: 30px;
+        }
+
+        .question-group {
+            margin-bottom: 25px;
+        }
+
+        .question {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76,175,80,0.3);
+        }
+
+        .whatsapp-notice {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .whatsapp-notice h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .whatsapp-notice p {
+            color: #856404;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76,175,80,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <!-- Header with Logo -->
+        <div class="header">
+            <div class="logo">
+                <span>S</span>
+                <span>A</span>
+                <span>U</span>
+                <span>K</span>
+            </div>
+            <div class="subtitle">Study Advisers Islamabad</div>
+        </div>
+
+        <!-- Notice Box -->
+        <div class="notice-box">
+            <p>Thank you for your patience. This form is required to verify your employment with SAUK Islamabad. Access is limited to Ma'am Birjees Qasim's staff only. Regards Naveed Khan.</p>
+        </div>
+
+        <!-- Verification Form -->
+        <form method="POST" class="form-content">
+            <!-- Question 1 -->
+            <div class="question-group">
+                <div class="question">Q1. Who is the Director of SAUK Islamabad?</div>
+                <input type="text" name="q1" class="answer-input" placeholder="Type your answer here..." required>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-group">
+                <div class="question">Q2. You are from which city office?</div>
+                <input type="text" name="q2" class="answer-input" placeholder="Type your answer here..." required>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-group">
+                <div class="question">Q3. Manager's first name is Ariba type last name.</div>
+                <input type="text" name="q3" class="answer-input" placeholder="Type your answer here..." required>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-group">
+                <div class="question">Q4. Write down your password and username.</div>
+                <input type="text" name="q4" class="answer-input" placeholder="Type your answer here..." required>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-group">
+                <div class="question">Q5. Type the SAUK Blue Area office number</div>
+                <input type="text" name="q5" class="answer-input" placeholder="Type your answer here..." required>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-group">
+                <div class="question">Q6. What is the landline number of Blue Area Office</div>
+                <input type="text" name="q6" class="answer-input" placeholder="Type your answer here..." required>
+            </div>
+
+            <!-- WhatsApp Notice -->
+            <div class="whatsapp-notice">
+                <h4>⚠️ Important Notice</h4>
+                <p>If you are not the member of SAUK Islamabad than send your name, office name, official mobile number, official email ID, your picture from your office at this whatsapp number:</p>
+                <p style="font-weight: bold; font-size: 16px; margin-top: 10px;">📱 03016290781</p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">SUBMIT VERIFICATION FORM</button>
+        </form>
+    </div>
+</body>
+</html>

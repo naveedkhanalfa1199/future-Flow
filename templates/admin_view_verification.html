@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Staff Verification - {{ staff.username }}{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Admin Menu</h2>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+        <a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+        <a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+        <a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+        <a href="{{ url_for('logout') }}" style="background-color: #f44336; color: white;">Logout</a>
+    </div>
+
+    <div class="content">
+        <h2>Staff Verification Answers - {{ staff.full_name }}</h2>
+        
+        <a href="{{ url_for('admin_staff') }}" class="btn btn-primary" style="margin-bottom: 20px;">← Back to Staff List</a>
+
+        {% if verification %}
+        <div style="background: #f9f9f9; padding: 25px; border-radius: 10px; border-left: 5px solid #4CAF50;">
+            <h3 style="color: #01411C; margin-bottom: 20px;">Verification Form Answers</h3>
+            
+            <div style="display: grid; gap: 15px;">
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong>Q1. Who is the Director of SAUK Islamabad?</strong><br>
+                    <span style="color: #333;">{{ verification.q1_answer or 'Not answered' }}</span>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong>Q2. You are from which city office?</strong><br>
+                    <span style="color: #333;">{{ verification.q2_answer or 'Not answered' }}</span>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong>Q3. Manager's first name is Ariba type last name.</strong><br>
+                    <span style="color: #333;">{{ verification.q3_answer or 'Not answered' }}</span>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong>Q4. Write down your password and username.</strong><br>
+                    <span style="color: #333;">{{ verification.q4_answer or 'Not answered' }}</span>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong>Q5. Type the SAUK Blue Area office number</strong><br>
+                    <span style="color: #333;">{{ verification.q5_answer or 'Not answered' }}</span>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3;">
+                    <strong>Q6. What is the landline number of Blue Area Office</strong><br>
+                    <span style="color: #333;">{{ verification.q6_answer or 'Not answered' }}</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; color: #666; font-size: 14px;">
+                <strong>Submitted at:</strong> {{ verification.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        </div>
+        {% else %}
+        <div style="background: #ffebee; padding: 20px; border-radius: 8px; text-align: center;">
+            <h4 style="color: #c62828;">No verification form submitted yet.</h4>
+            <p style="color: #666;">This staff member has not completed the verification form.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

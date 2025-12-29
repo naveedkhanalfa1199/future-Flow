@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}View Staff Users{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Staff Menu</h2>
+        <a href="{{ url_for('staff_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('staff_search') }}">Search Universities</a>
+        <a href="{{ url_for('staff_add_user') }}">Add Staff User</a>
+        <a href="{{ url_for('staff_view_users') }}">View Staff Users</a>
+        <a href="{{ url_for('logout') }}" style="background-color: #f44336; color: white;">Logout</a>
+    </div>
+    <div class="content">
+        <h2>Staff Users</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Failed Attempts</th>
+                    <th>Locked</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.failed_attempts }}</td>
+                    <td>{{ 'Yes' if user.is_locked else 'No' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

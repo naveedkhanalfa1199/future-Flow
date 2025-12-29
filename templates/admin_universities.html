@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Universities{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="sidebar">
+        <h2>Admin Menu</h2>
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin_universities') }}">Manage Universities</a>
+        <a href="{{ url_for('admin_dropdowns') }}">Manage Dropdown Lists</a>
+        <a href="{{ url_for('admin_staff') }}">Manage Staff</a>
+        <a href="{{ url_for('admin_login_activity') }}">View Login Activity</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+            <h2>Manage Universities</h2>
+            <a href="{{ url_for('admin_add_university_detailed') }}" class="btn btn-primary">
+                Add New University
+            </a>
+        </div>
+
+        {% if universities %}
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>University Name</th>
+                        <th>Country</th>
+                        <th>Locations</th>
+                        <th>Fields Count</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for uni in universities %}
+                    <tr>
+                        <td>{{ uni.id }}</td>
+                        <td>
+                            <strong>{{ uni.university_name }}</strong>
+                            {% if uni.fields %}
+                                <br><small style="color: #666;">
+                                    {% for field in uni.fields[:2] %}
+                                        {{ field.field_name }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                    {% if uni.fields|length > 2 %}...{% endif %}
+                                </small>
+                            {% endif %}
+                        </td>
+                        <td>{{ uni.country }}</td>
+                        <td>
+                            {% if uni.location_list %}
+                                {{ uni.location_list|join(', ') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge">{{ uni.fields|length if uni.fields else 0 }}</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                <a href="{{ url_for('admin_edit_university', id=uni.id) }}" class="btn btn-info btn-sm">
+                                    Edit Basic
+                                </a>
+                                <a href="{{ url_for('admin_view_fields', id=uni.id) }}" class="btn btn-warning btn-sm">
+                                    View Fields
+                                </a>
+                                <a href="{{ url_for('admin_delete_university', id=uni.id) }}" class="btn btn-danger btn-sm" 
+                                   onclick="return confirm('Are you sure you want to delete this university and all its fields?')">
+                                    Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 40px;">
+            <h3 style="color: #666; margin-bottom: 12px;">No Universities Found</h3>
+            <p style="color: #999; margin-bottom: 20px;">Get started by adding your first university to the system.</p>
+            <a href="{{ url_for('admin_add_university_detailed') }}" class="btn btn-primary">
+                Add Your First University
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.badge {
+    background: #4CAF50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.table-actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+</style>
+{% endblock %}
