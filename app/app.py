@@ -17,7 +17,7 @@ from reportlab.lib.units import inch
 import os
 import json
 import re
-from university_data import (
+from .university_data import (
     PAKISTANI_UNIVERSITIES, ENGLISH_TESTS, FIELD_NAMES,
     COUNTRIES, COUNTRY_LOCATIONS, STUDY_GAPS, CGPA_RANGES,
     PERCENTAGE_RANGES, INTAKES, DURATIONS, FSC_CUTOFFS,
