@@ -384,6 +384,48 @@ def check_bachelor_eligibility(student_fsc, student_ba, field):
 
     return False, "Entry requirements not met"
 
+
+def send_email_mailjet_api(to_email, subject, html_content):
+    """Send email using Mailjet HTTP API (works on Render)"""
+    try:
+        api_key = os.environ.get('MAILJET_API_KEY')
+        secret_key = os.environ.get('MAILJET_SECRET_KEY')
+        
+        if not api_key or not secret_key:
+            print("ERROR: Mailjet keys not found in environment")
+            return False
+            
+        url = "https://api.mailjet.com/v3.1/send"
+        auth = base64.b64encode(f"{api_key}:{secret_key}".encode()).decode()
+        
+        data = {
+            "Messages": [{
+                "From": {"Email": "naveed@studyadvisers.com", "Name": "SAUK Islamabad"},
+                "To": [{"Email": to_email}],
+                "Subject": subject,
+                "HTMLPart": html_content
+            }]
+        }
+        
+        headers = {
+            "Authorization": f"Basic {auth}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(url, json=data, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            print(f"✓ Email sent successfully to {to_email}")
+            return True
+        else:
+            print(f"✗ Mailjet API error: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"✗ Exception in send_email_mailjet_api: {str(e)}")
+        return False
+
+
 #
 # ENHANCED ROUTES - AUTHENTICATION
 #
