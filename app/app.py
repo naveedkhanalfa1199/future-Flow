@@ -1725,15 +1725,13 @@ def staff_send_email_advice():
             current_date=datetime.now().strftime("%Y-%m-%d")
         )
         
-        msg = Message(
-            subject=f"SAUK University Advice - {len(universities)} Universities",
-            recipients=[student_email],
-            html=html_content
-        )
-        
-        mail.send(msg)
-        flash(f'Email sent to {student_email}', 'success')
-        return redirect(url_for('staff_generate_advice'))
+        # Send email using Mailjet HTTP API
+        if send_email_mailjet_api(student_email, f"SAUK University Advice - {len(universities)} Universities", html_content):
+            flash(f'Email sent to {student_email}', 'success')
+            return redirect(url_for('staff_generate_advice'))
+        else:
+            flash('Email sending failed. Please try again.', 'error')
+            return redirect(url_for('staff_generate_advice'))
         
     except Exception as e:
         flash(f'Email sending failed: {str(e)}', 'error')
