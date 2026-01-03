@@ -1697,13 +1697,14 @@ def staff_send_email_advice():
         moi_eligible = []
         regular = []
         
-        # Get student profile data from form (if available)
-        student_fsc = request.form.get("student_fsc", "")
-        student_cgpa = request.form.get("student_cgpa", "")
-        student_percentage = request.form.get("student_percentage", "")
-        student_university = request.form.get("student_university", "")
-        student_study_gap = request.form.get("student_study_gap", "")
-        level_filter = request.form.get('level', "") or request.form.get('selected_level', "")
+        # Get student profile data from session
+        student_fsc = session.get('student_fsc', '')
+        student_cgpa = session.get('student_cgpa', '')
+        student_percentage = session.get('student_percentage', '')
+        student_university = session.get('student_university', '')
+        student_study_gap = session.get('student_study_gap', '')
+
+        level_filter = session.get('level_filter', '')
         
         # 🔥 FIX: PROCESS UNIVERSITIES PROPERLY (LIKE PDF GENERATION)
         for uni in universities:
@@ -1776,17 +1777,50 @@ def staff_send_email_advice():
                 field.english_tests_parsed = []
             
             # Check MOI eligibility for categorization
+            # MOI vs REGULAR DECISION LOGIC
             if field.moi_required == 'yes':
-                is_eligible, missing_info = check_moi_eligibility(
-                    student_fsc, student_cgpa, student_percentage,
-                    student_university, student_study_gap, field
-                )
-                if is_eligible:
-                    moi_eligible.append(uni)
+                # Check if ALL MOI filters provided hain
+                moi_filters_complete = all([
+                    student_fsc,
+                    student_cgpa or student_percentage,
+                    student_study_gap,
+                    student_university
+                ])
+            
+                if moi_filters_complete:
+                    # MOI eligibility check
+                    is_eligible, missing_info = check_moi_eligibility(
+                        student_fsc, student_cgpa, student_percentage,
+                        student_university, student_study_gap, field
+                    )
+                
+                    if is_eligible:
+                        # ✅ MOI ELIGIBLE
+                        uni.matched_field = field
+                        moi_eligible.append(uni)
+                        continue
+                    else:
+                        # ❌ MOI FAIL - Check general requirements
+                        meets_general = check_general_cgpa(student_cgpa, field)
+                    
+                        if meets_general:
+                            uni.matched_field = field
+                            regular.append(uni)
                 else:
-                    regular.append(uni)
+                    # MOI filters incomplete - Check general
+                    meets_general = check_general_cgpa(student_cgpa, field)
+                
+                    if meets_general:
+                        uni.matched_field = field
+                        regular.append(uni)
+            
             else:
-                regular.append(uni)
+                # NO MOI REQUIRED - Check general only
+                meets_general = check_general_cgpa(student_cgpa, field)
+            
+                if meets_general:
+                    uni.matched_field = field
+                    regular.append(uni)
         
         # Create email
         html_content = render_template(
