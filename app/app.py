@@ -279,7 +279,8 @@ def check_moi_eligibility(student_fsc, student_cgpa, student_percentage, student
         else:
             try:
                 required_fsc = float(field.moi_min_fsc.replace('%', ''))
-                if float(student_fsc) < required_fsc:
+                student_fsc_float = float(student_fsc.replace('%', ''))
+                if student_fsc_float < required_fsc:
                     return False, []
             except:
                 pass
@@ -302,7 +303,8 @@ def check_moi_eligibility(student_fsc, student_cgpa, student_percentage, student
         elif student_percentage:
             try:
                 required_percentage = float(field.moi_min_percentage.replace('%', ''))
-                if float(student_percentage) < required_percentage:
+                student_percentage_float = float(student_percentage.replace('%', ''))
+                if student_percentage_float < required_percentage:
                     return False, []
             except:
                 pass
@@ -313,7 +315,15 @@ def check_moi_eligibility(student_fsc, student_cgpa, student_percentage, student
             missing_info.append('Study Gap')
         else:
             try:
-                if int(student_study_gap) > int(field.moi_gap_years):
+                max_gap = int(field.moi_gap_years.split()[0])
+                student_gap_value = student_study_gap.replace(' Years', '').replace(' Year', '').strip()
+                
+                if student_gap_value.lower() == 'no gap':
+                    student_gap_num = 0
+                else:
+                    student_gap_num = int(student_gap_value)
+                
+                if student_gap_num > max_gap:
                     return False, []
             except:
                 pass
