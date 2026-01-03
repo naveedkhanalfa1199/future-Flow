@@ -1400,14 +1400,14 @@ def staff_download_advice_pdf():
     moi_eligible = []
     regular = []
     
-    # Get student profile data from form (if available)
-    student_fsc = request.form.get('student_fsc', '')
-    student_cgpa = request.form.get('student_cgpa', '')
-    student_percentage = request.form.get('student_percentage', '')
-    student_university = request.form.get('student_university', '')
-    student_study_gap = request.form.get('student_study_gap', '')
-    
-    level_filter = request.form.get('level', '') or request.form.get('selected_level', '')
+    # Get student profile data from session
+    student_fsc = session.get('student_fsc', '')
+    student_cgpa = session.get('student_cgpa', '')
+    student_percentage = session.get('student_percentage', '')
+    student_university = session.get('student_university', '')
+    student_study_gap = session.get('student_study_gap', '')
+
+    level_filter = session.get('level_filter', '')
     
     for uni in universities:
         matched_course = request.form.get(f'course_{uni.id}', '').lower().strip()
@@ -1462,20 +1462,46 @@ def staff_download_advice_pdf():
             field.matched_course = getattr(field, 'matched_course', field.field_name)
         
         if field.moi_required == 'yes':
-            is_eligible, missing_info = check_moi_eligibility(
-                student_fsc, student_cgpa, student_percentage,
-                student_university, student_study_gap, field
-            )
+            # Check if ALL MOI filters provided hain
+            moi_filters_complete = all([
+                student_fsc,
+                student_cgpa or student_percentage,
+                student_study_gap,
+                student_university
+            ])
             
-            if is_eligible:
-                uni.matched_field = field
-                moi_eligible.append(uni)
+            if moi_filters_complete:
+                # MOI eligibility check
+                is_eligible, missing_info = check_moi_eligibility(
+                    student_fsc, student_cgpa, student_percentage,
+                    student_university, student_study_gap, field
+                )
+                
+                if is_eligible:
+                    # ✅ MOI ELIGIBLE
+                    uni.matched_field = field
+                    moi_eligible.append(uni)
+                else:
+                    # ❌ MOI FAIL - Check general requirements
+                    meets_general = check_general_cgpa(student_cgpa, field)
+                    
+                    if meets_general:
+                        uni.matched_field = field
+                        regular.append(uni)
             else:
+                # MOI filters incomplete - Check general
+                meets_general = check_general_cgpa(student_cgpa, field)
+                
+                if meets_general:
+                    uni.matched_field = field
+                    regular.append(uni)
+        else:
+            # NO MOI REQUIRED - Check general only
+            meets_general = check_general_cgpa(student_cgpa, field)
+            
+            if meets_general:
                 uni.matched_field = field
                 regular.append(uni)
-        else:
-            uni.matched_field = field
-            regular.append(uni)
     
     # Create PDF
     buffer = BytesIO()
