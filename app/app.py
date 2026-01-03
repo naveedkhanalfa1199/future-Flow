@@ -1183,6 +1183,14 @@ def staff_generate_advice():
         english_test_type = request.form.get('english_test_type', "")
         english_test_score = request.form.get('english_test_score', "")
 
+        # 🔥 Store in session
+        session['student_fsc'] = student_fsc
+        session['student_cgpa'] = student_cgpa
+        session['student_percentage'] = student_percentage
+        session['student_university'] = student_university
+        session['student_study_gap'] = student_study_gap
+        session['level_filter'] = level
+
         if search_course:
             all_fields = UniversityField.query.all()
             for field in all_fields:
@@ -1276,64 +1284,94 @@ def staff_generate_advice():
                     if not is_bachelor_eligible:
                         continue
 
-                # Check MOI eligibility - ONLY 2 CATEGORIES NOW
+                # MOI vs REGULAR DECISION LOGIC
                 if field.moi_required == 'yes':
-                    is_eligible, missing_info = check_moi_eligibility(
-                        student_fsc, student_cgpa, student_percentage,
-                        student_university, student_study_gap, field
-                    )
-                    if is_eligible:
-                        if uni not in moi_eligible:
-                            uni.matched_field = field
-                            moi_eligible.append(uni)
+                    # University MOI accept karti hai
+                    
+                    # Check if ALL MOI filters provided hain
+                    moi_filters_complete = all([
+                        student_fsc,
+                        student_cgpa or student_percentage,
+                        student_study_gap,
+                        student_university
+                    ])
+                    
+                    if moi_filters_complete:
+                        # MOI eligibility check
+                        is_eligible, missing_info = check_moi_eligibility(
+                            student_fsc, student_cgpa, student_percentage,
+                            student_university, student_study_gap, field
+                        )
+                        
+                        if is_eligible:
+                            # ✅ STUDENT MOI ELIGIBLE HAI
+                            if uni not in moi_eligible:
+                                uni.matched_field = field
+                                moi_eligible.append(uni)
+                            # ⚠️ IMPORTANT: MOI eligible ko regular mein NAHI daalna
+                            continue
+                        else:
+                            # ❌ MOI FAIL - Check GENERAL requirements for REGULAR category
+                            meets_general = check_general_cgpa(student_cgpa, field)
+                            
+                            if meets_general:
+                                if uni not in regular_results:
+                                    uni.matched_field = field
+                                    regular_results.append(uni)
                     else:
-                        # MOI NOT ELIGIBLE = REGULAR CATEGORY
-                        if check_general_cgpa(student_cgpa, field):
+                        # MOI filters incomplete - Check GENERAL requirements
+                        meets_general = check_general_cgpa(student_cgpa, field)
+                        
+                        if meets_general:
                             if uni not in regular_results:
                                 uni.matched_field = field
                                 regular_results.append(uni)
+                
                 else:
-                    # NO MOI REQUIRED = REGULAR CATEGORY
-                    if check_general_cgpa(student_cgpa, field):
+                    # NO MOI REQUIRED = REGULAR ONLY
+                    meets_general = check_general_cgpa(student_cgpa, field)
+                    
+                    if meets_general:
                         if uni not in regular_results:
                             uni.matched_field = field
                             regular_results.append(uni)
 
-        # Generate warnings (MOI POTENTIAL WARNINGS REMOVED)
-        if not student_fsc:
-            profile_warnings.append("✕ FSc English marks not provided - some MOI eligibility checks skipped.")
-        if not student_cgpa and not student_percentage:
-            profile_warnings.append("✕ CGPA/Percentage not provided - some MOI eligibility checks skipped.")
-        if not student_study_gap:
-            profile_warnings.append("✕ Study gap not provided - some eligibility checks skipped.")
-        if not student_university:
-            profile_warnings.append("✕ Last university not provided - some MOI eligibility checks skipped.")
 
-        # Applied filters
-        applied_filters["Course"] = search_course.title()
-        if country:
-            applied_filters["Country"] = country
-        if location:
-            applied_filters["Location"] = location
-        if level:
-            applied_filters["Course Level"] = level
-        if intake:
-            applied_filters["Intake"] = intake
-        if max_fee:
-            applied_filters["Max Fee"] = f"£{max_fee}"
-        if english_test_type and english_test_score:
-            applied_filters["English Test"] = f"{english_test_type.replace('_', ' ').title()} - {english_test_score}"
-        if student_fsc:
-            applied_filters["FSc Marks"] = student_fsc + '%'
-        if student_cgpa:
-            applied_filters["CGPA"] = student_cgpa
-        if student_percentage:
-            applied_filters["Percentage"] = student_percentage + '%'
-        if student_study_gap:
-            applied_filters["Study Gap"] = student_study_gap + ' years'
-        if student_university:
-            applied_filters["Last University"] = student_university
+            # Generate warnings (MOI POTENTIAL WARNINGS REMOVED)
+            if not student_fsc:
+                profile_warnings.append("✕ FSc English marks not provided - some MOI eligibility checks skipped.")
+            if not student_cgpa and not student_percentage:
+                profile_warnings.append("✕ CGPA/Percentage not provided - some MOI eligibility checks skipped.")
+            if not student_study_gap:
+                profile_warnings.append("✕ Study gap not provided - some eligibility checks skipped.")
+            if not student_university:
+                profile_warnings.append("✕ Last university not provided - some MOI eligibility checks skipped.")
 
+            # Applied filters
+            applied_filters["Course"] = search_course.title()
+            if country:
+                applied_filters["Country"] = country
+            if location:
+                applied_filters["Location"] = location
+            if level:
+                applied_filters["Course Level"] = level
+            if intake:
+                applied_filters["Intake"] = intake
+            if max_fee:
+                applied_filters["Max Fee"] = f"£{max_fee}"
+            if english_test_type and english_test_score:
+                applied_filters["English Test"] = f"{english_test_type.replace('_', ' ').title()} - {english_test_score}"
+            if student_fsc:
+                applied_filters["FSc Marks"] = student_fsc + '%'
+            if student_cgpa:
+                applied_filters["CGPA"] = student_cgpa
+            if student_percentage:
+                applied_filters["Percentage"] = student_percentage + '%'
+            if student_study_gap:
+                applied_filters["Study Gap"] = student_study_gap + ' years'
+            if student_university:
+                applied_filters["Last University"] = student_university
+    
     dropdown_data = get_dropdown_data()
     hardcoded = get_hardcoded_values()
 
